@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Design of Experiment and Analysis of Variance</title>
+    <meta charset="utf-8">
+    <meta name="author" content="Raju Rimal" />
+    <link href="libs/remark-css/example.css" rel="stylesheet" />
+    <link rel="stylesheet" href="custom.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# Design of Experiment and Analysis of Variance
+## Repetition
+### Raju Rimal
+### 25 Aug, 2017
+
+---
+
+
+
+
+background-image: url(https://www.nmbu.no/sites/all/themes/nmbu_university/images/logo-nb.png)
+
+???
+
+Image credit: [NMBU](https://www.nmbu.no/sites/all/themes/nmbu_university/images/logo-nb.png)
+
+---
+class: center, middle, inverse
+
+# Statistical Inference
+## Hypothesis Testing
+
+---
+class: spread
+
+# Steps
+
+1.  Make a hypothesis
+--
+
+2.  Collect data
+--
+
+3.  Calculate test-statistic
+--
+
+4.  Compare test-statistic with theoretical distribution &lt;/br&gt;(T-statistic, F-statistic, `\(\chi^2\)` statistic)
+--
+
+5.  Conclusion and decision
+
+---
+class: spread
+
+.left-column[
+# Hypothesis
+## Null Hypothesis
+]
+
+.right-column[
+One sample t-test
+: `\(H_0: \mu = 5\)`
+
+Two sample t-test
+: `\(H_0: \mu_1 = \mu_2\)`
+
+ANOVA model
+: `\(H_0: \tau_1 = \tau_2 = \tau_3 = 0\)`
+
+Random effect Model
+: `\(H_0: \sigma_\tau^2 = 0\)`
+
+.red[_Always write hypothesis in terms of **population parameter**_]
+]
+
+---
+
+.left-column[
+# Hypothesis
+## Alternative Hypothesis
+]
+
+.right-column[
+
+### One sided vs Two sided
+
+a) Test if expected variance of `\(x\)` is greater than 11.
+
+b) Is there significant difference between 3 soya groups?
+
+c) Can we conclude that the average of `soya` diet gives higher protein than `non-soya` diet?
+
+d) Does fat percent vary accross these randomly chosen farms? 
+
+]
+
+---
+
+.left-column[
+# Test Statistic
+## T-Distribution
+]
+
+.right-column[
+&lt;img src="index_files/figure-html/unnamed-chunk-1-1.png" width="100%" /&gt;
+]
+
+---
+
+.left-column[
+# Test Statistic
+## T-test
+]
+
+.right-column[
+
+### One sample test
+`$$\text{t-statistic} = \frac{\bar{y} - \mu}{\mathrm{SE}(\bar{y})} = \frac{\bar{y} - \mu}{\hat{\sigma}/\sqrt{n}}$$`
+
+### Difference between two groups 
+`\begin{aligned}
+\text{t-statistic} &amp;= \frac{(\bar{y}_i - \bar{y}_j) - (\mu_i - \mu_j)}{\mathrm{SE}(\bar{y}_i - \bar{y}_j)} \\
+&amp;= \frac{(\bar{y}_i - \bar{y}_j) - (\mu_i - \mu_j)}{S_p^2\sqrt{1/n_1 + 1/n_2}}
+\end{aligned}`
+]
+
+---
+
+.left-column[
+# Test Statistic
+## Chisq Distribution
+]
+
+.right-column[
+&lt;img src="index_files/figure-html/unnamed-chunk-2-1.png" width="100%" /&gt;
+]
+
+---
+
+.left-column[
+# Test Statistic
+## Chisq Test
+]
+
+.right-column[
+
+]
+
+---
+
+.left-column[
+# Test Statistic
+## F Distribution
+]
+
+.right-column[
+&lt;img src="index_files/figure-html/unnamed-chunk-3-1.png" width="100%" /&gt;
+]
+
+---
+
+.left-column[
+# Test Statistic
+## Chisq Test
+]
+
+.right-column[
+
+]
+    </textarea>
+<script src="libs/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"ratio": "16:10",
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {window.dispatchEvent(new Event('resize'));});
+(function() {var d = document, s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler"); if (!r) return; s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }"; d.head.appendChild(s);})();</script>
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  tex2jax: {
+    skipTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+  }
+});
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
