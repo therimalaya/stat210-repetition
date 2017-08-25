@@ -1,0 +1,40 @@
+.inverse{
+  background-color: #117d6b;
+}
+
+h1, h2, h3, h4, h5, h6, a{
+  color: #117d6b;
+}
+
+.remark-slide-number{
+  font-family: "palatino", times;
+  color: #117d6b;
+}
+
+.inverse .remark-slide-number{
+  color: #fff;
+}
+
+.remark-slide-content{
+  font-size: 175%;
+}
+.left-column{
+  width: 30%;
+  float: left;
+}
+.right-column{
+  width: 68%;
+  float: right;
+}
+.spread{
+  line-height: 2em;
+}
+.mjx-chtml {
+  font-size: 100%!important;
+}
+.red{
+  color: red;
+}
+.bold{
+  font-weight: bold;
+}
