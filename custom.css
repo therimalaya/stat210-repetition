@@ -16,7 +16,7 @@ h1, h2, h3, h4, h5, h6, a{
 }
 
 .remark-slide-content{
-  font-size: 175%;
+  font-size: 150%;
 }
 .left-column{
   width: 30%;
@@ -26,7 +26,7 @@ h1, h2, h3, h4, h5, h6, a{
   width: 68%;
   float: right;
 }
-.spread{
+.spread, .spread summary{
   line-height: 2em;
 }
 .mjx-chtml {
@@ -37,4 +37,15 @@ h1, h2, h3, h4, h5, h6, a{
 }
 .bold{
   font-weight: bold;
+}
+.italics{
+  font-style:italic;
+}
+.remark-code{
+  font-size: 60%;
+}
+.side-caption{
+  font-size: 50%;
+  font-family: "Helvetica Neue", Arial;
+  line-height: 150%;
 }

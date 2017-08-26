@@ -14,7 +14,7 @@ class: center, middle, inverse, title-slide
 # Design of Experiment and Analysis of Variance
 ## Repetition
 ### Raju Rimal
-### 25 Aug, 2017
+### 26 Aug, 2017
 
 ---
 
@@ -36,21 +36,23 @@ class: center, middle, inverse
 ---
 class: spread
 
-# Steps
+.left-column[
+# Inference Steps
+![](images/SimpleSampling.png)
 
-1.  Make a hypothesis
---
 
-2.  Collect data
---
+]
+.right-column[
+1. Make a hypothesis
 
-3.  Calculate test-statistic
---
+2. Collect data
 
-4.  Compare test-statistic with theoretical distribution &lt;/br&gt;(T-statistic, F-statistic, `\(\chi^2\)` statistic)
---
+3. Calculate test-statistic
 
-5.  Conclusion and decision
+4. Compare test-statistic with theoretical distribution &lt;/br&gt;(T-statistic, F-statistic, `\(\chi^2\)` statistic)
+
+5. Conclusion and decision
+]
 
 ---
 class: spread
@@ -77,6 +79,7 @@ Random effect Model
 ]
 
 ---
+class: spread
 
 .left-column[
 # Hypothesis
@@ -87,25 +90,27 @@ Random effect Model
 
 ### One sided vs Two sided
 
-a) Test if expected variance of `\(x\)` is greater than 11.
+&lt;details&gt;
+&lt;summary&gt;Test if expected variance of \(x\) is greater than 11.&lt;/summary&gt;
+\[H_1: \sigma &gt; 11\]
+&lt;/details&gt;
 
-b) Is there significant difference between 3 soya groups?
+&lt;details&gt;
+&lt;summary&gt;Are the three soya groups significantly different?&lt;/summary&gt;
+\[H_1: \mu_i \ne \mu_j \text{ for any } i \ne j\]
+If \(\tau_i = \mu_i - \mu\) is the effect of group \(i\),
+\[H_1: \tau_i \ne 0 \text{ for at least one } i = 1, 2, 3\]
+&lt;/details&gt;
 
-c) Can we conclude that the average of `soya` diet gives higher protein than `non-soya` diet?
+&lt;details&gt;
+&lt;summary&gt;Can we conclude that the average of `soya` diet gives higher protein than `non-soya` diet?&lt;/summary&gt;
+\[H_1: \Gamma &lt; 0 \text{ where, } \Gamma = \tau_1 - \frac{1}{2}(\tau_2 + \tau_3)\]
+&lt;/details&gt;
 
-d) Does fat percent vary accross these randomly chosen farms? 
-
-]
-
----
-
-.left-column[
-# Test Statistic
-## T-Distribution
-]
-
-.right-column[
-&lt;img src="index_files/figure-html/unnamed-chunk-1-1.png" width="100%" /&gt;
+&lt;details&gt;
+&lt;summary&gt;Does fat percent vary accross these randomly chosen farms?&lt;/summary&gt;
+\[H_1: \sigma_\tau^2 &gt; 0\]
+&lt;/details&gt;
 ]
 
 ---
@@ -113,32 +118,98 @@ d) Does fat percent vary accross these randomly chosen farms?
 .left-column[
 # Test Statistic
 ## T-test
+
+
+
+&lt;img src="index_files/figure-html/unnamed-chunk-2-1.png" width="90%" /&gt;
+
+&lt;div class="side-caption"&gt;The .italics[darker region] under the curve is .italics[rejection region]. If the calculated t-value lies in this region, we reject Null hypothesis.&lt;/div&gt;
 ]
 
 .right-column[
 
 ### One sample test
-`$$\text{t-statistic} = \frac{\bar{y} - \mu}{\mathrm{SE}(\bar{y})} = \frac{\bar{y} - \mu}{\hat{\sigma}/\sqrt{n}}$$`
-
+`$$\text{t-statistic} = \dfrac{\bar{y}}{\mathrm{SE}(\bar{y})} = \dfrac{\bar{y}}{\hat{\sigma}/\sqrt{n}} \sim t_{\alpha/2, n-1}$$`
 ### Difference between two groups 
-`\begin{aligned}
-\text{t-statistic} &amp;= \frac{(\bar{y}_i - \bar{y}_j) - (\mu_i - \mu_j)}{\mathrm{SE}(\bar{y}_i - \bar{y}_j)} \\
-&amp;= \frac{(\bar{y}_i - \bar{y}_j) - (\mu_i - \mu_j)}{S_p^2\sqrt{1/n_1 + 1/n_2}}
-\end{aligned}`
+`$$\text{t-statistic} = \dfrac{\bar{y}_i - \bar{y}_j}{\mathrm{SE}(\bar{y}_i - \bar{y}_j)} = \dfrac{\bar{y}_i - \bar{y}_j}{S_p\sqrt{\cfrac{1}{n_1} + \cfrac{1}{n_2}}} \sim t_{\alpha/2, N-a}$$`
+### C.I. true difference between two groups
+`$$\left[\bar{y}_i - \bar{y}_j \pm t_{\alpha/2, N-a} \times S_p\sqrt{\cfrac{1}{n_1} + \cfrac{1}{n_2}} \right]$$`
 ]
+
 
 ---
 
 .left-column[
 # Test Statistic
-## Chisq Distribution
-]
+## Example
+&lt;img src="index_files/figure-html/unnamed-chunk-3-1.png" width="90%" /&gt;
 
+
+```
+  Modified Unmodified
+1    16.85      16.62
+2    16.40      16.75
+3    17.21      17.37
+```
+
+
+]
 .right-column[
-&lt;img src="index_files/figure-html/unnamed-chunk-2-1.png" width="100%" /&gt;
+### Two sample t-test
+
+```
+
+	Two Sample t-test
+
+data:  Modified and Unmodified
+t = -2.1767, df = 18, p-value = 0.04306
+alternative hypothesis: true difference in means is not equal to 0
+95 percent confidence interval:
+ -0.542393085 -0.009606915
+sample estimates:
+       mean of x        mean of y  pooled std.dev. 
+      16.7660000       17.0420000        0.2835293 
+```
+
+### ANOVA test
+
+```
+Analysis of Variance Table
+          Df  Sum Sq Mean Sq F value  Pr(&gt;F)  
+key        1 0.38088 0.38088   4.738 0.04306 *
+Residuals 18 1.44700 0.08039                  
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+```
+
+
 ]
 
 ---
+
+.left-column[
+# `\(\chi^2\)` Statistic
+## Chisq Test
+
+
+&lt;img src="index_files/figure-html/unnamed-chunk-8-1.png" width="90%" /&gt;
+
+&lt;div class = "side-caption"&gt;
+The shaded region covers .italics[5%] area of the curve.
+&lt;/div&gt;
+
+]
+
+.right-column[
+### Variance Test
+
+### Confidence Interval
+
+### Example
+]
+
+---
+
 
 .left-column[
 # Test Statistic
@@ -157,7 +228,7 @@ d) Does fat percent vary accross these randomly chosen farms?
 ]
 
 .right-column[
-&lt;img src="index_files/figure-html/unnamed-chunk-3-1.png" width="100%" /&gt;
+&lt;img src="index_files/figure-html/unnamed-chunk-9-1.png" width="100%" /&gt;
 ]
 
 ---
