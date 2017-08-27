@@ -40,7 +40,6 @@ class: center, middle, inverse
 ## Hypothesis Testing
 
 ---
-class: spread
 
 .left-column[
 # Inference Steps
@@ -51,6 +50,9 @@ knitr::include_graphics("images/SimpleSampling.png")
 
 ]
 .right-column[
+
+### Steps
+
 1. Make a hypothesis
 
 2. Collect data
@@ -60,6 +62,13 @@ knitr::include_graphics("images/SimpleSampling.png")
 4. Compare test-statistic with theoretical distribution </br>(T-statistic, F-statistic, $\chi^2$ statistic)
 
 5. Conclusion and decision
+
+### Remember
+
+For an estimate we always use .red[hat]. For instance, Sample mean $\bar{x} = \hat{\mu}$ is an estimate of population mean $\mu$.
+
+Similarly, $\hat{\sigma}$ is an estimate of population standard deviation $\sigma$.
+
 ]
 
 ---
@@ -75,6 +84,8 @@ class: spread
 ]
 
 .right-column[
+### Use cases
+
 One sample t-test
 : $H_0: \mu = 5$
 
@@ -172,9 +183,11 @@ t_plot
 ### One sample mean
 $$\text{t-statistic} = \dfrac{\bar{y}}{\mathrm{SE}(\bar{y})} = \dfrac{\bar{y}}{\hat{\sigma}/\sqrt{n}} \sim t_{\alpha/2, n-1}$$
 ### Difference between two groups 
-$$\text{t-statistic} = \dfrac{\bar{y}_i - \bar{y}_j}{\mathrm{SE}(\bar{y}_i - \bar{y}_j)} = \dfrac{\bar{y}_i - \bar{y}_j}{S_p\sqrt{\cfrac{1}{n_1} + \cfrac{1}{n_2}}} \sim t_{\alpha/2, N-a}$$
+$$\text{t-statistic} = \dfrac{\bar{y}_i - \bar{y}_j}{\mathrm{SE}(\bar{y}_i - \bar{y}_j)} = \dfrac{\bar{y}_i - \bar{y}_j}{S_\text{pooled}\sqrt{\cfrac{1}{n_1} + \cfrac{1}{n_2}}} \sim t_{\alpha/2, N-a}$$
 ### C.I. true difference between two groups
-$$\left[\bar{y}_i - \bar{y}_j \pm t_{\alpha/2, N-a} \times S_p\sqrt{\cfrac{1}{n_1} + \cfrac{1}{n_2}} \right]$$
+$$\left[\bar{y}_i - \bar{y}_j \pm t_{\alpha/2, N-a} \times S_\text{pooled}\sqrt{\cfrac{1}{n_1} + \cfrac{1}{n_2}} \right]$$
+
+**Remember:** Here $N = n_1 + n_2$ is total number of observation in all groups.
 ]
 
 
@@ -211,6 +224,16 @@ with(Portlandcement, mixlm::t_test(Modified, Unmodified, var.equal = TRUE))
 mdl <- mixlm::lm(value ~ key, data = cement)
 mixlm::anova_reg(mdl)
 ```
+
+<h3><a href="javascript:;" data-fancybox data-src="#hidden-content">Pooled Variance</a></h3>
+
+.hidden[
+<div id="hidden-content">
+<h3>Pooled Variance</h3>
+Pooled Variance \((S_\text{pooled}^2)\) is same as MSE in Anova. We can calculate it as,
+\[S_\text{pooled}^2 = \frac{(n_1 - 1)S_1^2 + (n_2 - 1)S_2^2}{n_1 + n_2 - 2}\]
+</div>
+]
 ]
 
 ---
@@ -523,7 +546,6 @@ Since, $\mu_i = \mu + \tau_i$. All group means $\mu_1, \mu_2, \mu_3$ and overall
 .left-column[
 # ANOVA Model
 ## Confidence Interval
-
 
 ]
 .right-column[

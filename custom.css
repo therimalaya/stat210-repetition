@@ -16,7 +16,7 @@ h1, h2, h3, h4, h5, h6, a{
 }
 
 .remark-slide-content{
-  font-size: 130%;
+  font-size: 135%;
 }
 .left-column{
   width: 30%;
@@ -36,7 +36,7 @@ h1, h2, h3, h4, h5, h6, a{
   line-height: 2em;
 }
 .mjx-chtml {
-  font-size: 100%!important;
+  font-size: 98%!important;
 }
 .red{
   color: red;
@@ -51,7 +51,7 @@ h1, h2, h3, h4, h5, h6, a{
   font-size: 60%;
 }
 .side-caption{
-  font-size: 50%;
+  font-size: 70%;
   font-family: "Helvetica Neue", Arial;
   line-height: 150%;
   width: 90%;
@@ -70,4 +70,10 @@ h1, h2, h3, h4, h5, h6, a{
 .left-40-column{
   width: 40%;
   float: left;
+}
+.hidden{
+  display: none;
+}
+#hidden-content {
+    zoom: 2;
 }
