@@ -16,7 +16,7 @@ h1, h2, h3, h4, h5, h6, a{
 }
 
 .remark-slide-content{
-  font-size: 150%;
+  font-size: 130%;
 }
 .left-column{
   width: 30%;
@@ -25,6 +25,12 @@ h1, h2, h3, h4, h5, h6, a{
 .right-column{
   width: 68%;
   float: right;
+}
+.left-column ul{
+  list-style: none;
+  padding-left: 0;
+  font-family: Helvetica, Arial;
+  line-height: 150%;
 }
 .spread, .spread summary{
   line-height: 2em;
@@ -48,4 +54,20 @@ h1, h2, h3, h4, h5, h6, a{
   font-size: 50%;
   font-family: "Helvetica Neue", Arial;
   line-height: 150%;
+  width: 90%;
+}
+#birthweight-example~p{
+  width: 50%;
+  float: left;
+}
+#birthweight-example{
+  flex: 1;
+}
+.right-60-column{
+  width: 60%;
+  float: left;
+}
+.left-40-column{
+  width: 40%;
+  float: left;
 }
