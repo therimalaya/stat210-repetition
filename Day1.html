@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Design of Experiment and Analysis of Variance</title>
+    <meta charset="utf-8">
+    <meta name="author" content="Raju Rimal" />
+    <link href="libs/remark-css/example.css" rel="stylesheet" />
+    <link rel="stylesheet" href="libs/fancybox/fb.min.css" type="text/css" media="all" />
+    <link rel="stylesheet" href="custom.css" type="text/css" media="all" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# Design of Experiment and Analysis of Variance
+## Repetition
+### Raju Rimal
+### 28 Aug, 2017
+
+---
+
+
+
+
+background-image: url(https://www.nmbu.no/sites/all/themes/nmbu_university/images/logo-nb.png)
+
+???
+
+Image credit: [NMBU](https://www.nmbu.no/sites/all/themes/nmbu_university/images/logo-nb.png)
+
+---
+class: center, middle, inverse
+
+# Statistical Inference
+## Hypothesis Testing
+
+---
+
+.left-column[
+# Inference Steps
+
+&lt;img src="images/SimpleSampling.png" width="100%" /&gt;
+
+]
+.right-column[
+
+### Steps
+
+1. Make a hypothesis
+
+2. Collect data
+
+3. Calculate test-statistic
+
+4. Compare test-statistic with theoretical distribution &lt;/br&gt;(T-statistic, F-statistic, `\(\chi^2\)` statistic)
+
+5. Conclusion and decision
+
+### Remember
+
+For an estimate we always use .red[hat]. For instance, Sample mean `\(\bar{x} = \hat{\mu}\)` is an estimate of population mean `\(\mu\)`.
+
+Similarly, `\(\hat{\sigma}\)` is an estimate of population standard deviation `\(\sigma\)`.
+
+]
+
+---
+class: spread
+
+.left-column[
+# Hypothesis
+## Null Hypothesis
+
+### Exam questions
+- &lt;a href="images/2011-1.png" data-fancybox &gt;2011: 2(a)&lt;/a&gt;
+- &lt;a href="images/2012-1.png" data-fancybox &gt;2012: 2(b)&lt;/a&gt;
+]
+
+.right-column[
+### Use cases
+
+One sample t-test
+: `\(H_0: \mu = 5\)`
+
+Two sample t-test
+: `\(H_0: \mu_1 = \mu_2\)`
+
+ANOVA model
+: `\(H_0: \tau_1 = \tau_2 = \tau_3 = 0\)`
+
+Random effect Model
+: `\(H_0: \sigma_\tau^2 = 0\)`
+
+.red[_Always write hypothesis in terms of **population parameter**_]
+]
+
+---
+class: spread
+
+.left-column[
+# Hypothesis
+## Alternative Hypothesis
+
+### Exam questions
+- &lt;a href="images/2011-1.png" data-fancybox &gt;2011: 2(a)&lt;/a&gt;
+- &lt;a href="images/2012-1.png" data-fancybox &gt;2012: 2(b)&lt;/a&gt;
+]
+
+.right-column[
+
+### One sided vs Two sided
+
+&lt;details&gt;
+&lt;summary&gt;Test if expected variance of \(x\) is greater than 11.&lt;/summary&gt;
+\[H_1: \sigma &gt; 11\]
+&lt;/details&gt;
+
+&lt;details&gt;
+&lt;summary&gt;Are the three soya groups significantly different?&lt;/summary&gt;
+\[H_1: \mu_i \ne \mu_j \text{ for any } i \ne j\]
+If \(\tau_i = \mu_i - \mu\) is the effect of group \(i\),
+\[H_1: \tau_i \ne 0 \text{ for at least one } i = 1, 2, 3\]
+&lt;/details&gt;
+
+&lt;details&gt;
+&lt;summary&gt;Can we conclude that the average of `soya` diet gives higher protein than `non-soya` diet?&lt;/summary&gt;
+\[H_1: \Gamma &lt; 0 \text{ where, } \Gamma = \tau_1 - \frac{1}{2}(\tau_2 + \tau_3)\]
+&lt;/details&gt;
+
+&lt;details&gt;
+&lt;summary&gt;Does fat percent vary accross these randomly chosen farms?&lt;/summary&gt;
+\[H_1: \sigma_\tau^2 &gt; 0\]
+&lt;/details&gt;
+]
+
+---
+
+.left-column[
+# T Statistic
+## T-test
+
+
+
+&lt;img src="Day1_files/figure-html/unnamed-chunk-3-1.png" width="90%" /&gt;
+
+&lt;div class="side-caption"&gt;The .italics[darker region] under the curve is .italics[rejection region]. If the calculated t-value lies in this region, we reject Null hypothesis.&lt;/div&gt;
+]
+
+.right-column[
+
+### One sample mean
+`$$\text{t-statistic} = \dfrac{\bar{y}}{\mathrm{SE}(\bar{y})} = \dfrac{\bar{y}}{\hat{\sigma}/\sqrt{n}} \sim t_{\alpha/2, n-1}$$`
+### Difference between two groups 
+`$$\text{t-statistic} = \dfrac{\bar{y}_i - \bar{y}_j}{\mathrm{SE}(\bar{y}_i - \bar{y}_j)} = \dfrac{\bar{y}_i - \bar{y}_j}{S_\text{pooled}\sqrt{\cfrac{1}{n_1} + \cfrac{1}{n_2}}} \sim t_{\alpha/2, N-a}$$`
+### C.I. true difference between two groups
+`$$\left[\bar{y}_i - \bar{y}_j \pm t_{\alpha/2, N-a} \times S_\text{pooled}\sqrt{\cfrac{1}{n_1} + \cfrac{1}{n_2}} \right]$$`
+
+**Remember:** Here `\(N = n_1 + n_2\)` is total number of observation in all groups.
+]
+
+
+---
+
+.left-column[
+# T Statistic
+## Example
+&lt;img src="Day1_files/figure-html/unnamed-chunk-4-1.png" width="90%" /&gt;
+
+```
+  Modified Unmodified
+1     16.9       16.6
+2     16.4       16.8
+```
+]
+.right-column[
+### Two sample t-test
+
+
+```
+
+	Two Sample t-test
+
+data:  Modified and Unmodified
+t = -2, df = 20, p-value = 0.04
+alternative hypothesis: true difference in means is not equal to 0
+95 percent confidence interval:
+ -0.54239 -0.00961
+sample estimates:
+       mean of x        mean of y  pooled std.dev. 
+          16.766           17.042            0.284 
+```
+
+### ANOVA test
+
+```
+Analysis of Variance Table
+          Df Sum Sq Mean Sq F value Pr(&gt;F)  
+key        1  0.381   0.381    4.74  0.043 *
+Residuals 18  1.447   0.080                 
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+```
+
+&lt;h3&gt;&lt;a href="javascript:;" data-fancybox data-src="#hidden-content"&gt;Pooled Variance&lt;/a&gt;&lt;/h3&gt;
+
+.hidden[
+&lt;div id="hidden-content"&gt;
+&lt;h3&gt;Pooled Variance&lt;/h3&gt;
+Pooled Variance \((S_\text{pooled}^2)\) is same as MSE in Anova. We can calculate it as,
+\[S_\text{pooled}^2 = \frac{(n_1 - 1)S_1^2 + (n_2 - 1)S_2^2}{n_1 + n_2 - 2}\]
+&lt;/div&gt;
+]
+]
+
+---
+
+.left-column[
+# `\(\chi^2\)` Statistic
+## Chisq Test
+
+
+&lt;img src="Day1_files/figure-html/unnamed-chunk-9-1.png" width="90%" /&gt;
+
+&lt;div class = "side-caption"&gt;
+The shaded region covers .italics[5%] area of the curve.
+&lt;/div&gt;
+
+]
+
+.right-column[
+### Variance Test
+`$$\chi^2\text{ statistic } = \frac{(n-1)S^2}{\sigma^2} \sim \chi^2_{\alpha, n-1}$$`
+
+### ANOVA: Confidence Interval of MSE `\((\hat{\sigma}^2)\)`
+
+`$$\left[\dfrac{(N-a)\text{MSE}}{\chi^2_{\alpha/2, N-a}}, \dfrac{(N-a)\text{MSE}}{\chi^2_{1-\alpha/2, N-a}}\right] =
+\left[\dfrac{\text{SSE}}{\chi^2_{\alpha/2, N-a}}, \dfrac{\text{SSE}}{\chi^2_{1-\alpha/2, N-a}}\right]$$`
+
+### Things to remember
+- `\((N-a)\)` is the degree of freedom for residual
+- `\((N-a)\text{MSE} = \text{SSE}\)`
+- `\(\chi^2_{N-a}\)` is unsymmetric unlike t-distribution
+
+]
+
+---
+
+.left-column[
+# F Statistic
+## F test
+
+&lt;img src="Day1_files/figure-html/unnamed-chunk-11-1.png" width="90%" /&gt;
+&lt;div class = "side-caption"&gt;
+The ratio of two chisq distribution is F-distribution
+&lt;/div&gt;
+]
+
+.right-column[
+### Testing difference in variablility of two groups
+`$$H_0: \sigma_1^2 = \sigma_2^2 \text{ vs } H_1: \sigma_1^2 \ne \sigma_2^2$$`
+### F statistic
+If `\(S_1^2 \sim \chi^2_{n_1 - 1}\)` and `\(S_2^2 \sim \chi^2_{n_2 - 1}\)` are sample mean of two groups respectively,
+`$$F = \frac{S_1^2}{S_2^2} \sim F_{n_1-1, n_2 - 1}$$`
+### Secret Trick
+`$$F_{(1-\alpha), n_1, n_2} = \frac{1}{F_{\alpha, n_2, n_1}}$$`
+]
+
+---
+
+.left-column[
+# F Statistic
+## Example
+
+
+
+&lt;img src="Day1_files/figure-html/unnamed-chunk-13-1.png" width="90%" /&gt;
+
+
+```
+    group  mean   var n
+ not.soya 77.75 11.36 8
+     soya 82.89 21.86 9
+```
+]
+
+.right-column[
+### Soya diet experiment
+`$$\text{F-value} = \frac{S_1^2}{S_2^2} = \frac{21.861}{11.357} = 1.925 \sim F_{7, 8}$$`
+
+F-value from &lt;a href="images/F0.05.png" data-fancybox &gt;Table&lt;/a&gt; is 3.726
+
+&lt;img src="Day1_files/figure-html/unnamed-chunk-15-1.png" width="80%" style="display: block; margin: auto;" /&gt;
+
+Reject `\(H_0\)`: Variation between two groups significantly differs.
+]
+
+---
+class: center, middle, inverse
+
+# ANOVA Model
+---
+
+.left-column[
+# ANOVA Model
+## Assumptions
+
+&lt;img src="Day1_files/figure-html/unnamed-chunk-17-1.png" width="90%" /&gt;
+&lt;div class="side-caption"&gt;
+&lt;ol&gt;
+&lt;li&gt;Errors are random and independent&lt;/li&gt;
+&lt;li&gt;Errors are normally distributed with mean 0 and constant variance \(\sigma^2\)&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+]
+.right-column[
+### Mean Model
+`$$y_{ij} = \mu_i + \varepsilon_{ij}$$`
+Here,
+`\(\mu_i\)` is mean of group `\(i\)`; `\(i = 1, 2, \ldots a\)` and `\(j = 1, \ldots n\)`
+
+### Effect Model
+`$$y_{ij} = \mu + \tau_i + \varepsilon_{ij}$$`
+Here,
+We split `\(\mu_i\)` (group mean) into overall mean `\((\mu)\)` and effect `\((\tau_i)\)` of group `\(i\)` as, `\(\mu_i = \mu + \tau_i\)`. In this case we will have `\(\sum_{i = 1}^a{\tau_i} = 0\)`, i.e, `\(\tau_1 + \tau_2 + \tau_3 = 0\)`
+
+### Assumptions
+In ANVOA model, we assume `\(\varepsilon_{ij} \sim \mathrm{NID}(0, \sigma^2)\)`
+]
+
+---
+
+.left-column[
+# ANOVA Model
+## ANOVA table
+
+&lt;img src="Day1_files/figure-html/unnamed-chunk-18-1.png" width="90%" /&gt;
+
+
+```
+          Df  Sum Sq Mean Sq F value
+Weight1    2 1012033  506017    12.5
+Residuals 21  851962   40570        
+```
+]
+.right-column[
+&lt;img src="images/oneway-anova.png" width="80%" style="display: block; margin: auto;" /&gt;
+
+
+.left-40-column[
+#### Hypothesis
+
+`\begin{aligned}
+H_0: \tau_i &amp;= 0 \text{ for i = 1, 2, 3} \\
+H_1: \tau_i &amp;\ne 0 \text{ for at least one }i
+\end{aligned}`
+
+#### Decision
+From &lt;a href="images/F005-2.png" data-fancybox&gt;F-table&lt;/a&gt;, `\(F_0 &gt; F_c\)`. So we reject `\(H_0\)` at 95% confidence level.
+
+]
+.right-60-column[
+&lt;img src="Day1_files/figure-html/unnamed-chunk-21-1.png" width="90%" style="display: block; margin: auto 0 auto auto;" /&gt;
+]
+]
+
+---
+
+class: inverse, center, middle
+
+# Exam Questions
+
+---
+.left-column[
+# ANOVA Model
+## Exam Questions
+- &lt;a href="images/2012-2b-question.png" data-fancybox="gallery"&gt;2012:&lt;/a&gt;
+&lt;a href="images/2012-2bcd.png" data-fancybox = "gallery"&gt;2(b), 2(c)&lt;/a&gt;
+- &lt;a href="images/2012-appendix-45.png" data-fancybox="gallery"&gt;2012: Appendix 4-5&lt;/a&gt;
+]
+.right-column[
+
+### Question 2(b)
+**Hypothesis:**
+`\begin{aligned}
+H_0 &amp;:\tau_1 = \tau_2 = \tau_3 = 0 \\
+H_1 &amp;:\text{At least one }\tau_i \ne 0, i = 1, 2, 3
+\end{aligned}`
+
+We have p-value in ANOVA table given in Appendix 4. 
+**If p-value is _less than_ the level of significance `\(\alpha\)`, we reject `\(H_0\)`**
+
+### Question 2(c)
+Since, `\(\mu_i = \mu + \tau_i\)`. All group means `\(\mu_1, \mu_2, \mu_3\)` and overall mean `\(\mu\)` are given, you can find `\(\tau_1, \tau_2\)` and `\(\tau_3\)`.
+]
+    </textarea>
+<script src="libs/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"ratio": "16:9",
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {window.dispatchEvent(new Event('resize'));});
+(function() {var d = document, s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler"); if (!r) return; s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }"; d.head.appendChild(s);})();</script>
+<script src="libs/jquery/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="libs/fancybox/fb.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="script.js" type="text/javascript" charset="utf-8"></script>
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  tex2jax: {
+    skipTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+  }
+});
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

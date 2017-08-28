@@ -26,6 +26,33 @@ library(mixlm)
 library(tidyverse)
 library(gganimate)
 ```
+```{r load-function, include=FALSE}
+get_fplot <- function(alpha, deg.freedom, max_limit, fvalue = NULL) {
+d <- deg.freedom
+lmt <- max_limit
+plt <- ggplot(data.frame(x = 0:lmt), aes(x)) +
+  stat_function(fun = df, args = list(df1 = d[1], df2 = d[2]), n = 200) +
+  stat_function(fun = df, args = list(df1 = d[1], df2 = d[2]), n = 200, 
+                xlim = c(qf(alpha, df1 = d[1], df2 = d[2], lower.tail = FALSE), lmt), 
+                geom = "area") +
+  ggtitle(paste("F-distribution with", paste(d, collapse = " and "), "df"),
+          paste(alpha, "level of significance")) +
+  labs(x = "F", y = NULL) +
+  annotate(x = qf(alpha, df1 = d[1], df2 = d[2], lower.tail = FALSE),
+           color = "red",
+           ymin = 0, ymax = 0.1, geom = "linerange") +
+  annotate(x = qf(alpha, df1 = d[1], df2 = d[2], lower.tail = FALSE),
+           label = paste("F =", round(qf(alpha, df1 = d[1], df2 = d[2], lower.tail = FALSE), 3)), 
+           geom = "text", y = 0.15, hjust = 0)
+if (!is.null(fvalue)){
+  plt <- plt +
+    annotate(x = fvalue, y = 0, geom = "point", color = "red") +
+    annotate(x = fvalue, y = 0, geom = "text", label = paste("F0:", round(fvalue, 3)), hjust = 1.2)
+}
+return(plt)
+}
+```
+
 
 background-image: url(https://www.nmbu.no/sites/all/themes/nmbu_university/images/logo-nb.png)
 
