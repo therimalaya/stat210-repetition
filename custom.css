@@ -77,3 +77,13 @@ h1, h2, h3, h4, h5, h6, a{
 #hidden-content {
     zoom: 2;
 }
+.flex-box{
+  display:flex;
+}
+.flex-box > *{
+  flex: 1
+}
+#use-cases~ul{
+  list-style-type: square;
+  padding-left: 25px;
+}

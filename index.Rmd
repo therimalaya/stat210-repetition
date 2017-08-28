@@ -20,7 +20,8 @@ editor_options:
 ---
 
 ```{r setup, include=FALSE}
-options(htmltools.dir.version = FALSE, digits = 3, signif = 999)
+options(htmltools.dir.version = FALSE, 
+        digits = 3, scipen = 9, signif = 999)
 knitr::opts_chunk$set(echo = FALSE, comment = NULL)
 library(mixlm)
 library(tidyverse)
@@ -51,6 +52,72 @@ if (!is.null(fvalue)){
 }
 return(plt)
 }
+get_chisq_plot <- function(alpha, deg.freedom, max_limit, test_statistic = NULL){
+d <- deg.freedom
+lmt <- max_limit
+plt <- ggplot(data.frame(x = 0:lmt), aes(x)) +
+  stat_function(fun = dchisq, args = list(df = d), n = 200) +
+  stat_function(fun = dchisq, args = list(df = d), n = 200, 
+                xlim = c(0, qchisq(alpha, df = d, lower.tail = TRUE)), 
+                geom = "area") +
+  stat_function(fun = dchisq, args = list(df = d), n = 200, 
+                xlim = c(qchisq(alpha, df = d, lower.tail = FALSE), lmt), 
+                geom = "area") +
+  ggtitle(paste("Chisq-distribution with", d, "df"),
+          paste(2*alpha, "level of significance")) +
+  labs(x = "Chisq", y = NULL) +
+  annotate(x = c(qchisq(alpha, df = d, lower.tail = FALSE),
+                 qchisq(alpha, df = d, lower.tail = TRUE)),
+           color = "red",
+           ymin = 0, ymax = c(0.02, 0.05), geom = "linerange") +
+  annotate(x = c(qchisq(alpha, df = d, lower.tail = FALSE),
+                 qchisq(alpha, df = d, lower.tail = TRUE)),
+           label = paste("Chisq =", round(c(
+             qchisq(alpha, df = d, lower.tail = FALSE),
+             qchisq(alpha, df = d, lower.tail = TRUE)
+           ), 3)), 
+           geom = "text", y = c(0.02, 0.05), hjust = c(0, 1))
+if (!is.null(test_statistic)){
+  plt <- plt +
+    annotate(x = test_statistic, y = 0, geom = "point", color = "red") +
+    annotate(x = test_statistic, y = 0, geom = "text", label = paste("Chisq0:", round(test_statistic, 3)), hjust = 1.2)
+}
+return(plt)
+}
+get_tplot <- function(alpha, deg.freedom, max_limit, test_statistic = NULL){
+d <- deg.freedom
+lmt <- max_limit
+plt <- ggplot(data.frame(x = -lmt:lmt), aes(x)) +
+  stat_function(fun = dt, args = list(df = d), n = 200) +
+  stat_function(fun = dt, args = list(df = d), n = 200, 
+                xlim = c(-lmt, qt(alpha, df = d, lower.tail = TRUE)), 
+                geom = "area") +
+  stat_function(fun = dt, args = list(df = d), n = 200, 
+                xlim = c(qt(alpha, df = d, lower.tail = FALSE), lmt), 
+                geom = "area") +
+  ggtitle(paste("T-distribution with", d, "df"),
+          paste(2*alpha, "level of significance")) +
+  labs(x = "T", y = NULL) +
+  annotate(x = c(qt(alpha, df = d, lower.tail = FALSE),
+                 qt(alpha, df = d, lower.tail = TRUE)),
+           color = "red",
+           ymin = 0, ymax = 0.1, geom = "linerange") +
+  annotate(x = c(qt(alpha, df = d, lower.tail = FALSE),
+                 qt(alpha, df = d, lower.tail = TRUE)),
+           label = paste("t=", round(c(
+             qt(alpha, df = d, lower.tail = FALSE),
+             qt(alpha, df = d, lower.tail = TRUE)
+           ), 3)), 
+           geom = "text", y = 0.1, hjust = c(0, 1))
+if (!is.null(test_statistic)){
+  plt <- plt +
+    annotate(x = test_statistic, y = 0, geom = "point", color = "red") +
+    annotate(x = test_statistic, y = 0, geom = "text", 
+             label = paste("t0:", round(test_statistic, 3)), 
+             hjust = if(length(test_statistic) == 1) 1.2 else c(1, 0))
+}
+return(plt)
+}
 ```
 
 
@@ -60,391 +127,13 @@ background-image: url(https://www.nmbu.no/sites/all/themes/nmbu_university/image
 
 Image credit: [NMBU](https://www.nmbu.no/sites/all/themes/nmbu_university/images/logo-nb.png)
 
----
-class: center, middle, inverse
-
-# Statistical Inference
-## Hypothesis Testing
-
----
-
-.left-column[
-# Inference Steps
-
-```{r, out.width='100%'}
-knitr::include_graphics("images/SimpleSampling.png")
-```
-
-]
-.right-column[
-
-### Steps
-
-1. Make a hypothesis
-
-2. Collect data
-
-3. Calculate test-statistic
-
-4. Compare test-statistic with theoretical distribution </br>(T-statistic, F-statistic, $\chi^2$ statistic)
-
-5. Conclusion and decision
-
-### Remember
-
-For an estimate we always use .red[hat]. For instance, Sample mean $\bar{x} = \hat{\mu}$ is an estimate of population mean $\mu$.
-
-Similarly, $\hat{\sigma}$ is an estimate of population standard deviation $\sigma$.
-
-]
-
----
-class: spread
-
-.left-column[
-# Hypothesis
-## Null Hypothesis
-
-### Exam questions
-- <a href="images/2011-1.png" data-fancybox >2011: 2(a)</a>
-- <a href="images/2012-1.png" data-fancybox >2012: 2(b)</a>
-]
-
-.right-column[
-### Use cases
-
-One sample t-test
-: $H_0: \mu = 5$
-
-Two sample t-test
-: $H_0: \mu_1 = \mu_2$
-
-ANOVA model
-: $H_0: \tau_1 = \tau_2 = \tau_3 = 0$
-
-Random effect Model
-: $H_0: \sigma_\tau^2 = 0$
-
-.red[_Always write hypothesis in terms of **population parameter**_]
-]
-
----
-class: spread
-
-.left-column[
-# Hypothesis
-## Alternative Hypothesis
-
-### Exam questions
-- <a href="images/2011-1.png" data-fancybox >2011: 2(a)</a>
-- <a href="images/2012-1.png" data-fancybox >2012: 2(b)</a>
-]
-
-.right-column[
-
-### One sided vs Two sided
-
-<details>
-<summary>Test if expected variance of \(x\) is greater than 11.</summary>
-\[H_1: \sigma > 11\]
-</details>
-
-<details>
-<summary>Are the three soya groups significantly different?</summary>
-\[H_1: \mu_i \ne \mu_j \text{ for any } i \ne j\]
-If \(\tau_i = \mu_i - \mu\) is the effect of group \(i\),
-\[H_1: \tau_i \ne 0 \text{ for at least one } i = 1, 2, 3\]
-</details>
-
-<details>
-<summary>Can we conclude that the average of `soya` diet gives higher protein than `non-soya` diet?</summary>
-\[H_1: \Gamma < 0 \text{ where, } \Gamma = \tau_1 - \frac{1}{2}(\tau_2 + \tau_3)\]
-</details>
-
-<details>
-<summary>Does fat percent vary accross these randomly chosen farms?</summary>
-\[H_1: \sigma_\tau^2 > 0\]
-</details>
-]
-
----
-
-.left-column[
-# T Statistic
-## T-test
-
-```{r, echo = FALSE, fig.width=4, out.width='100%', fig.asp=0.7, fig.retina=2}
-d <- 18
-alpha <- 0.025
-lmt <- 4
-t_plot <- ggplot(data.frame(x = -lmt:lmt), aes(x)) +
-  stat_function(fun = dt, args = list(df = d)) +
-  stat_function(fun = dt, args = list(df = d), 
-                xlim = c(-lmt, qt(alpha, df = d, FALSE)), 
-                geom = "area") +
-  stat_function(fun = dt, args = list(df = d), 
-                xlim = c(-1 * qt(alpha, df = d, FALSE), lmt), 
-                geom = "area") +
-  stat_function(fun = dt, args = list(df = d), 
-                xlim = c(-1 * qt(alpha, df = d, FALSE), lmt)) +
-  ggtitle(paste("T-distribution with", d, 
-                "df"),
-          paste(alpha * 2, "level of significance")) +
-  labs(x = "T", y = NULL) +
-  annotate(x = c(1, -1) * qt(alpha, df = d, FALSE), 
-           color = "red",
-           ymin = 0, ymax = 0.07, geom = "linerange") +
-  annotate(x = c(1, -1) * qt(alpha, df = d, FALSE), 
-           label = paste("t = ", c(1, -1) * round(qt(alpha, df = d, FALSE), 3)), geom = "text", y = 0.08, hjust = c(1, 0))
-```
-
-```{r, fig.width=3.5, out.width='90%', fig.asp = 1, fig.retina=2}
-t_plot
-```
-
-<div class="side-caption">The .italics[darker region] under the curve is .italics[rejection region]. If the calculated t-value lies in this region, we reject Null hypothesis.</div>
-]
-
-.right-column[
-
-### One sample mean
-$$\text{t-statistic} = \dfrac{\bar{y}}{\mathrm{SE}(\bar{y})} = \dfrac{\bar{y}}{\hat{\sigma}/\sqrt{n}} \sim t_{\alpha/2, n-1}$$
-### Difference between two groups 
-$$\text{t-statistic} = \dfrac{\bar{y}_i - \bar{y}_j}{\mathrm{SE}(\bar{y}_i - \bar{y}_j)} = \dfrac{\bar{y}_i - \bar{y}_j}{S_\text{pooled}\sqrt{\cfrac{1}{n_1} + \cfrac{1}{n_2}}} \sim t_{\alpha/2, N-a}$$
-### C.I. true difference between two groups
-$$\left[\bar{y}_i - \bar{y}_j \pm t_{\alpha/2, N-a} \times S_\text{pooled}\sqrt{\cfrac{1}{n_1} + \cfrac{1}{n_2}} \right]$$
-
-**Remember:** Here $N = n_1 + n_2$ is total number of observation in all groups.
-]
-
-
----
-
-.left-column[
-# T Statistic
-## Example
-```{r, fig.width=3, out.width='90%', fig.asp = 1, fig.retina=2}
-load("../_data/Portlandcement.RData")
-cement <- gather(Portlandcement)
-plt <- cement %>% 
-  ggplot(aes(key, value)) +
-  geom_boxplot() +
-  stat_summary(fun.y = mean, geom = "point", shape = 4, color = "red") +
-  coord_flip() +
-  labs(x = NULL, y = 'Strength') +
-  theme(axis.text.y.left = element_text(angle = 90, hjust = 0.5))
-plt
-```
-```{r}
-head(Portlandcement, 2)
-```
-]
-.right-column[
-### Two sample t-test
-
-```{r}
-with(Portlandcement, mixlm::t_test(Modified, Unmodified, var.equal = TRUE))
-```
-
-### ANOVA test
-```{r}
-mdl <- mixlm::lm(value ~ key, data = cement)
-mixlm::anova_reg(mdl)
-```
-
-<h3><a href="javascript:;" data-fancybox data-src="#hidden-content">Pooled Variance</a></h3>
-
-.hidden[
-<div id="hidden-content">
-<h3>Pooled Variance</h3>
-Pooled Variance \((S_\text{pooled}^2)\) is same as MSE in Anova. We can calculate it as,
-\[S_\text{pooled}^2 = \frac{(n_1 - 1)S_1^2 + (n_2 - 1)S_2^2}{n_1 + n_2 - 2}\]
-</div>
-]
-]
-
----
-
-.left-column[
-# $\chi^2$ Statistic
-## Chisq Test
-
-```{r, echo = FALSE, fig.width=4, out.width='100%', fig.asp=0.7, fig.retina=2}
-d <- 18
-alpha <- 0.025
-lmt <- 50
-chisq_plot <- ggplot(data.frame(x = 0:lmt), aes(x)) +
-  stat_function(fun = dchisq, args = list(df = d)) +
-  stat_function(fun = dchisq, args = list(df = d),
-                xlim = c(0, qchisq(alpha, df = d, 
-                                   lower.tail = TRUE)), 
-                geom = "area") +
-  stat_function(fun = dchisq, args = list(df = d),
-                xlim = c(qchisq(alpha, df = d, 
-                                lower.tail = FALSE), lmt), 
-                geom = "area") +
-  ggtitle(paste("Chisq-dist with", d, 
-                "degree of freedom"),
-          paste(alpha * 2, "level of significance")) +
-  labs(x = "Chisq", y = NULL) +
-  annotate(x = c(qchisq(alpha, df = d, lower.tail = FALSE), 
-                 qchisq(alpha, df = d, lower.tail = TRUE)), 
-           color = "red",
-           ymin = 0, ymax = 0.025, geom = "linerange") +
-  annotate(x = c(qchisq(alpha, df = d, lower.tail = FALSE), 
-                 qchisq(alpha, df = d, lower.tail = TRUE)), 
-           label = round(c(qchisq(alpha, df = d, lower.tail = FALSE),
-                     qchisq(alpha, df = d, lower.tail = TRUE)), 3), 
-                     geom = "text", y = 0.03, hjust = c(0, 1))
-```
-```{r, fig.width=3.5, out.width='90%', fig.asp = 1, fig.retina=2}
-chisq_plot
-```
-
-<div class = "side-caption">
-The shaded region covers .italics[5%] area of the curve.
-</div>
-
-]
-
-.right-column[
-### Variance Test
-$$\chi^2\text{ statistic } = \frac{(n-1)S^2}{\sigma^2} \sim \chi^2_{\alpha, n-1}$$
-
-### ANOVA: Confidence Interval of MSE $(\hat{\sigma}^2)$
-
-$$\left[\dfrac{(N-a)\text{MSE}}{\chi^2_{\alpha/2, N-a}}, \dfrac{(N-a)\text{MSE}}{\chi^2_{1-\alpha/2, N-a}}\right] =
-\left[\dfrac{\text{SSE}}{\chi^2_{\alpha/2, N-a}}, \dfrac{\text{SSE}}{\chi^2_{1-\alpha/2, N-a}}\right]$$
-
-### Things to remember
-- $(N-a)$ is the degree of freedom for residual
-- $(N-a)\text{MSE} = \text{SSE}$
-- $\chi^2_{N-a}$ is unsymmetric unlike t-distribution
-
-]
-
----
-
-.left-column[
-# F Statistic
-## F test
-```{r, echo = FALSE, fig.width=4, out.width='100%', fig.asp=0.7, fig.retina=2}
-d <- c(3, 15)
-alpha <- 0.05
-lmt <- 10
-f_plot <- ggplot(data.frame(x = 0:lmt), aes(x)) +
-  stat_function(fun = df, args = list(df1 = d[1], df2 = d[2]), n = 200) +
-  stat_function(fun = df, args = list(df1 = d[1], df2 = d[2]), n = 200, 
-                xlim = c(qf(alpha, df1 = d[1], df2 = d[2], lower.tail = FALSE), lmt), 
-                geom = "area") +
-  ggtitle(paste("F-distribution with", paste(d, collapse = " and "), "df"),
-          paste(alpha, "level of significance")) +
-  labs(x = "F", y = NULL) +
-  annotate(x = qf(alpha, df1 = d[1], df2 = d[2], lower.tail = FALSE),
-           color = "red",
-           ymin = 0, ymax = 0.1, geom = "linerange") +
-  annotate(x = qf(alpha, df1 = d[1], df2 = d[2], lower.tail = FALSE),
-           label = paste("F =", round(qf(alpha, df1 = d[1], df2 = d[2], lower.tail = FALSE), 3)), 
-           geom = "text", y = 0.15, hjust = 0)
-```
-```{r, fig.width=3.5, out.width='90%', fig.asp = 1, fig.retina=2}
-f_plot
-```
-<div class = "side-caption">
-The ratio of two chisq distribution is F-distribution
-</div>
-]
-
-.right-column[
-### Testing difference in variablility of two groups
-$$H_0: \sigma_1^2 = \sigma_2^2 \text{ vs } H_1: \sigma_1^2 \ne \sigma_2^2$$
-### F statistic
-If $S_1^2 \sim \chi^2_{n_1 - 1}$ and $S_2^2 \sim \chi^2_{n_2 - 1}$ are sample mean of two groups respectively,
-$$F = \frac{S_1^2}{S_2^2} \sim F_{n_1-1, n_2 - 1}$$
-### Secret Trick
-$$F_{(1-\alpha), n_1, n_2} = \frac{1}{F_{\alpha, n_2, n_1}}$$
-]
-
----
-
-.left-column[
-# F Statistic
-## Example
-
-```{r}
-load("../_data/svin.RData")
-```
-
-```{r, fig.width=3, out.width='90%', fig.asp = 1, fig.retina=2}
-soya_plot <- soya %>% 
-  ggplot(aes(group, slaktevekt)) +
-  geom_boxplot() +
-  stat_summary(fun.y = mean, geom = "point", shape = 4, color = "red") +
-  coord_flip() +
-  labs(x = NULL, y = 'Strength') +
-  theme(axis.text.y.left = element_text(angle = 90, hjust = 0.5))
-soya_plot
-```
-
-```{r}
-soya_sumry <- soya %>% 
-    group_by(group) %>% 
-    summarise(
-        mean = mean(slaktevekt),
-        var = var(slaktevekt),
-        n = n()
-    ) %>% as.data.frame()
-print(soya_sumry, row.names = FALSE, digits = 4)
-```
-]
-
-.right-column[
-### Soya diet experiment
-$$\text{F-value} = \frac{S_1^2}{S_2^2} = \frac{`r soya_sumry[2, 3]`}{`r soya_sumry[1, 3]`} = `r soya_sumry[2, 3]/soya_sumry[1, 3]` \sim F_{`r soya_sumry[, 4] - 1`}$$
-
-F-value from <a href="images/F0.05.png" data-fancybox >Table</a> is `r round(qf(0.05, soya_sumry[2, 4] - 1, soya_sumry[1, 4] - 1, lower = FALSE), 4)`
-
-```{r, fig.width = 5, out.width = '80%', fig.asp = 0.5, fig.retina = 2, fig.align = "center"}
-
-get_fplot <- function(alpha, deg.freedom, max_limit, fvalue) {
-d <- deg.freedom
-lmt <- max_limit
-ggplot(data.frame(x = 0:lmt), aes(x)) +
-  stat_function(fun = df, args = list(df1 = d[1], df2 = d[2]), n = 200) +
-  stat_function(fun = df, args = list(df1 = d[1], df2 = d[2]), n = 200, 
-                xlim = c(qf(alpha, df1 = d[1], df2 = d[2], lower.tail = FALSE), lmt), 
-                geom = "area") +
-  ggtitle(paste("F-distribution with", paste(d, collapse = " and "), "df"),
-          paste(alpha, "level of significance")) +
-  labs(x = "F", y = NULL) +
-  annotate(x = qf(alpha, df1 = d[1], df2 = d[2], lower.tail = FALSE),
-           color = "red",
-           ymin = 0, ymax = 0.1, geom = "linerange") +
-  annotate(x = qf(alpha, df1 = d[1], df2 = d[2], lower.tail = FALSE),
-           label = paste("F =", round(qf(alpha, df1 = d[1], df2 = d[2], lower.tail = FALSE), 3)), 
-           geom = "text", y = 0.15, hjust = 0) +
-  annotate(x = fvalue, y = 0, geom = "point", color = "red") +
-  annotate(x = fvalue, y = 0, geom = "text", label = paste("F0:", round(fvalue, 3)), hjust = 1.2)
-}
-
-fvalue <- soya_sumry[2, 3]/soya_sumry[1, 3]
-get_fplot(0.05, c(7, 8), 10, fvalue)
-```
-
-Reject $H_0$: Variation between two groups significantly differs.
-]
 
 ---
 class: center, middle, inverse
 
 # ANOVA Model
----
-
-.left-column[
-# ANOVA Model
-## Assumptions
 ```{r}
-load("../_data/Exam2013.RData")
+load("_data/Exam2013.RData")
 ```
 ```{r, fig.width=3, out.width='90%', fig.asp = 1, fig.retina=2}
 bwt_plot <- x2013 %>% 
@@ -457,39 +146,15 @@ bwt_plot <- x2013 %>%
   theme(axis.text.y.left = element_text(angle = 90, hjust = 0.5)) +
   stat_summary(aes(x = 2), fun.y = mean, 
                geom = "point", shape = 15, color = "blue", size = 3)
-bwt_plot
 ```
-
-<div class="side-caption">
-<ol>
-<li>Errors are random and independent</li>
-<li>Errors are normally distributed with mean 0 and constant variance \(\sigma^2\)</li>
-</ol>
-</div>
-]
-.right-column[
-### Mean Model
-$$y_{ij} = \mu_i + \varepsilon_{ij}$$
-Here,
-$\mu_i$ is mean of group $i$; $i = 1, 2, \ldots a$ and $j = 1, \ldots n$
-
-### Effect Model
-$$y_{ij} = \mu + \tau_i + \varepsilon_{ij}$$
-Here,
-We split $\mu_i$ (group mean) into overall mean $(\mu)$ and effect $(\tau_i)$ of group $i$ as, $\mu_i = \mu + \tau_i$. In this case we will have $\sum_{i = 1}^a{\tau_i} = 0$, i.e, $\tau_1 + \tau_2 + \tau_3 = 0$
-
-### Assumptions
-In ANVOA model, we assume $\varepsilon_{ij} \sim \mathrm{NID}(0, \sigma^2)$
-]
-
 ---
 
 .left-column[
 # ANOVA Model
 ## ANOVA table
 
-```{r, fig.width=3, out.width='90%', fig.asp = 1, fig.retina=2}
-bwt_plot
+```{r, fig.width=3, out.width='90%', fig.asp = 0.9, fig.retina=2}
+bwt_plot + ggtitle("Data from Exam 2013")
 ```
 
 ```{r}
@@ -499,10 +164,6 @@ aov_tbl[, 1:4]
 ```
 ]
 .right-column[
-```{r, out.width="80%", fig.align="center"}
-knitr::include_graphics("images/oneway-anova.png")
-```
-
 
 .left-40-column[
 #### Hypothesis
@@ -536,34 +197,251 @@ get_fplot(0.05, c(aov_tbl[1, 1], aov_tbl[2, 1]), 15, aov_tbl[1, 4]) +
       family = "mono")
 ```
 ]
+
+### Questions
+a) What is the 95% **confidence interval of error variance**?
+
+b) We found that there is significant effect of first child's weight on second child, but how different is the effect of `High` from `low` and `medium`?
+
 ]
 
 ---
 
-class: inverse, center, middle
+.left-column[
+# ANOVA Model
+## Confidence Interval
+```{r, fig.width=3.5, out.width='90%', fig.asp = 0.9, fig.retina=2}
+get_chisq_plot(0.025, 21, 50)
+```
+```{r, fig.width=3.5, out.width='90%', fig.asp = 0.3, fig.retina=2}
+cq <- qchisq(c(0.025, 0.975), 
+             aov_tbl["Residuals", "Df"], 
+             lower.tail = FALSE)
+ci_sigmasq <- aov_tbl["Residuals", "Sum Sq"]/cq
+dta <- data.frame(y = 0, x = ci_sigmasq, estimate = aov_tbl["Residuals", "Mean Sq"])
+sigma_interval <- ggplot(dta, aes(x, y)) +
+  theme_void() +
+  geom_point(shape = "|", size = 5) +
+  geom_text(aes(label = round(x)), vjust = -2, hjust = c(0, 1)) +
+  geom_point(aes(x = estimate), color = "red", size = 3) +
+  geom_hline(yintercept = 0) +
+  geom_text(aes(label = round(estimate), x = estimate), 
+            vjust = -2, color = "red") +
+  annotate(geom = "text", y = 0, vjust = 2, hjust = c(0, 1, 0.5),
+           label = c("lower", "upper", "estimate"), 
+           x = c(dta$x, dta$estimate[1]))
+plot(sigma_interval)
+```
+]
+.right-column[
+### Confidence interval of error variance
+$$\dfrac{\text{SSE}}{\chi^2_{\alpha/2, N-a}} 
+\le \sigma^2 \le
+\dfrac{\text{SSE}}{\chi^2_{1-(\alpha/2), N-a}}$$
 
-# Exam Questions
+### Exam 2013 Data
+Using values in previous slide in above formula,
+$$\left[
+\dfrac{`r aov_tbl["Residuals", "Sum Sq"]`}{`r cq[1]`}, 
+\dfrac{`r aov_tbl["Residuals", "Sum Sq"]`}{`r cq[2]`}
+\right] = \left[
+`r round(aov_tbl["Residuals", "Sum Sq"]/cq[1], 1)`, 
+`r round(aov_tbl["Residuals", "Sum Sq"]/cq[2], 1)`
+\right]$$
+
+At **95% confidence level**, we can say that the true error variance $\sigma^2$ lies between the interval (`r round(ci_sigmasq, 1)`).
+
+<h3><a href="images/2011-1b.png" data-fancybox>Exercise: Exam 2011 1(b)</a></h3>
+]
 
 ---
 .left-column[
 # ANOVA Model
-## Exam Questions
-- <a href="images/2012-2b-question.png" data-fancybox="gallery">2012:</a>
-<a href="images/2012-2bcd.png" data-fancybox = "gallery">2(b), 2(c)</a>
-- <a href="images/2012-appendix-45.png" data-fancybox="gallery">2012: Appendix 4-5</a>
+## Post-hoc Test
+```{r, fig.width=3.5, out.width='90%', fig.asp = 1, fig.retina=2}
+tky <- TukeyHSD(aov(mdl))
+tky_df <- as.data.frame(tky[["Weight1"]]) %>% 
+  rownames_to_column("Weight1")
+tky_plt <- ggplot(tky_df, 
+       aes(Weight1, diff, ymin = lwr, ymax = upr)) +
+  geom_point(color = "red") +
+  geom_errorbar(width = 0.5) +
+  geom_hline(yintercept = 0, color = "royalblue", linetype = 2) +
+  geom_label(aes(label = round(diff, 1)), vjust = -0.5) +
+  geom_text(aes(label = Weight1), vjust = 1.5) +
+  coord_flip() +
+  labs(y = "Difference in Weight2") +
+  theme(axis.text.y = element_blank(),
+        axis.ticks.y = element_blank()) +
+  ggtitle("Tukey pairwise comparison",
+          "95% confidence interval")
+tky_plt
+```
+.side-caption[
+Think what will happen if you increase the confidence level from 0.05 to 0.1.
 ]
-.right-column[
+].right-column[
+### Tukey Pairwise Comparison
+For multiple testing, Tukey has suggested **studentized range statistic** as,
+$$q = 
+\dfrac{\bar{y}_\text{max} - \bar{y}_\text{max}}
+{\sqrt{\text{MSE}/n}}$$
+Compare $q$ with $q_\alpha(a, f)$ found in <a href="images/qtable005.png" data-fancybox="gallery">table</a><a href="images/qtable001.png" data-fancybox="gallery"></a>. We declare a pair to be significantly different if $q > q_{\alpha}(a, f)$.
 
-### Question 2(b)
+### Confidence Interval
+$$(\bar{y}_i - \bar{y}_j) \pm q_\alpha(a, f)\sqrt{\frac{\text{MSE}}{n}}$$
+$$(\bar{y}_i - \bar{y}_j) - q_\alpha(a, f)\sqrt{\frac{\text{MSE}}{n}} \le \mu_i - \mu_j \le (\bar{y}_i - \bar{y}_j) + q_\alpha(a, f)\sqrt{\frac{\text{MSE}}{n}}$$
+You can also check if this interval contains zero.
+]
+
+---
+
+.left-column[
+# ANOVA Model
+## Post-hoc Example
+```{r, fig.width=3.5, out.width='90%', fig.asp = 0.9, fig.retina=2}
+tky_plt
+```
+
+```{r}
+print(as.data.frame(wt_sumry[, -3]), row.names = FALSE)
+```
+
+].right-column[
+<h3><a href = "images/2013-2.png" data-fancybox="gallery">Exam 2013, 2(d)</a></h3>
+
+From the <a href="images/2013-a1.png" data-fancybox="gallery">Appendix 1</a> and <a href="images/2013-a4.png" data-fancybox="gallery">Appendix 4</a>, we have,
+
+```{r}
+as.data.frame(aov_tbl)
+```
+
+Using <a href="images/qtable005.png" data-fancybox="gallery">studentized, T-distribution table</a> $q_{0.05}(3, 21) = `r qtukey(0.05, 3, 21, lower.tail = FALSE)`$. So,
+
+$$T_{0.05} = q_{0.05}(3, 21)\sqrt{\frac{`r aov_tbl["Residuals", "Mean Sq"]`}{`r as.numeric(wt_sumry[1, "n"])`}} = `r qtukey(0.05, 3, 21, lower.tail = FALSE) * sqrt(aov_tbl["Residuals", "Mean Sq"]/wt_sumry[1, "n"])`$$
+
+We have three possible pairs for comparison: `Low-High`, `Medium-High` and `Medium-Low`. The difference in their means are: <code>`r apply(combn(wt_sumry$mean, 2), 2, diff)`</code> respectively. 
+
+If compared with $T_{0.05}(3, 21)$, we see that at 95% confidence level, we find `Low-High` and `Medium-Low` differ significantly.
+
+<h3><a href="pastexams/2013.pdf" target = "_blank">Exam 2015, 1(e)</a></h3>
+]
+
+---
+
+.left-column[
+# ANOVA Model
+## Contrast test
+```{r, fig.width=3.5, out.width='90%', fig.asp = 0.9, fig.retina=2}
+get_tplot(0.025, 21, 3, c(1.94, -1.94))
+```
+].right-column[
+### Use cases
+
+- Comparison of one group with average of other group
+- Comparing treatments with control
+
+<h3><a href="images/2014-2d.png" data-fancybox>Exam 2014: 2(d)</a></h3>
 **Hypothesis:**
+$$H_0: \frac{1}{2}(\mu_1 + \mu_2) - \frac{1}{2}(\mu_3 + \mu_4) = 0 \text{ vs }
+H_1: \frac{1}{2}(\mu_1 + \mu_2)- \frac{1}{2}(\mu_3 + \mu_4) \ne 0$$
+
+**Decision:**
+
+From <a href="images/2014-a8.png" data-fancybox>Table 8</a>, $\text{p-value }(0.065) > 0.05$.
+<details>
+<summary><em>What should we conclude?</em></summary>
+.small[
+At 5% significance level we reject null hypothesis. So, we can not argue that expected differs significantly between January-June and July-December.
+]
+</details>
+]
+
+---
+
+.left-column[
+# ANOVA Model
+## Contrast Calculation
+```{r, fig.width=3.5, out.width='90%', fig.asp = 0.9, fig.retina=2}
+get_tplot(0.025, 21, 3, c(1.94, -1.94))
+```
+Continue on Exam 2014: 2(d)
+].right-column[
+Before any compution, **formulate a hypothesis**.
+
+### Estimate of Contrast
+$$\Gamma = \sum_{i = 1}^a{c_i\mu_i} = \frac{1}{2}(\mu_1 + \mu_2) - \frac{1}{2}(\mu_3 - \mu_4) = -5.5$$
+Here the contrast coefficients $c_i$ are: $1/2, 1/2, -1/2, -1/2$. Contrast coefficients sum to zero. For estimation of $\Gamma$, use respective sample mean. Also use <a href="images/2014-a6.png" data-fancybox>Table 6</a> for following calculations.
+
+### Standard Error and test statistic
 \begin{aligned}
-H_0 &:\tau_1 = \tau_2 = \tau_3 = 0 \\
-H_1 &:\text{At least one }\tau_i \ne 0, i = 1, 2, 3
+\text{SE}(\hat{\Gamma}) = \sqrt{\frac{\text{MSE}}{n}\sum_{i = 1}^a{c_i^2}} = 2.82 && 
+t = \frac{\hat{\Gamma}}{\text{S.E}(\hat{\Gamma})} \sim t_{\alpha/2, N-a}
 \end{aligned}
+]
 
-We have p-value in ANOVA table given in Appendix 4. 
-**If p-value is _less than_ the level of significance $\alpha$, we reject $H_0$**
+---
 
-### Question 2(c)
-Since, $\mu_i = \mu + \tau_i$. All group means $\mu_1, \mu_2, \mu_3$ and overall mean $\mu$ are given, you can find $\tau_1, \tau_2$ and $\tau_3$.
+.left-column[
+# ANOVA Model
+## Random Effect Model
+### Random factor
+$$\tau_i \sim \mathrm{N}(0, \sigma_\tau^2)$$
+### Fixed factor
+$$\sum_{i = 1}^a{\tau_i} = 0$$
+].right-column[
+### The Model
+$$y_{ij} = \mu + \tau_i + \varepsilon_{ij} \text{ where, } \varepsilon_{ij} \sim \mathrm{N}(0, \sigma^2)\text{ and } \tau_i \sim \mathrm{N}(0, \sigma^2_\tau)$$
+
+### Why Random effect model
+_Specific levels are not of interest_. General variation is more important. Levels of a factor are **randomly selected**. For example, if `besetning` (farm) is not of interest, we randomly sample such farms from a population of farm.
+
+Usually, **blocks** are taken as random factor.
+
+### A comparison with Fixed Effect Model
+_Specific levels of a factor is important_ than their general variation. These levels are **specifically chosen**. For instance, comparison of new and old drug where a particular drug is used for comparison.
+]
+
+---
+
+.left-column[
+# ANOVA Model
+## Random Effect Model
+
+```{r, fig.width=3.5, out.width='90%', fig.asp = 0.9, fig.retina=2}
+get_fplot(0.05, c(5, 18), 7, 1.74)
+```
+].right-column[
+<h3><a href="images/2011-1a.png" data-fancybox="gallery">Exam 2011: 1(a)</a></h3>
+**Hypothesis:**
+$$H_0: \sigma_\tau^2 = 0 \text{ vs } H_1: \sigma_\tau^2 > 0$$
+From <a href="images/2011-a2.png" data-fancybox="gallery">Appendix 2</a>, we see p-value is larger than $\alpha = 0.05$, we can not reject the null hypothesis. So, we claim that **at 95% confidence level** we claim that there is _not significant variation_ between the farms.
+
+### Estimates of Variance Components
+$$\text{total variation var}(y_{ij}) = \sigma_\tau^2 + \sigma^2$$
+We estimate them as,
+$$\hat{\sigma} = \text{MSE} \text{ and } \hat{\sigma_\tau} = \frac{\text{MS}_\text{treatment} - \text{MSE}}{n}$$
+]
+
+---
+
+.left-column[
+# ANOVA Model
+## Random Effect Model
+
+- <a href="images/2011-1cd.png" data-fancybox>Exam 2011: 1(c), 1(d)</a>
+- <a href="images/2012-1c.png" data-fancybox>Exam 2012: 1(c)</a>
+- <a href="images/2013-1c.png" data-fancybox>Exam 2013: 1(c)</a>
+- <a href="images/2014-1e.png" data-fancybox>Exam 2014: 1(e)</a>
+- <a href="images/2015-2c.png" data-fancybox>Exam 2015: 2(c)</a>
+
+].right-column[
+### Intraclass Correlation Coefficient
+Proportion of variation between groups to total variation.
+$$\rho = \frac{\sigma_\tau^2}{\sigma_\tau^2 + \sigma^2}$$
+Using estimates of variance components, we can estimate intraclass correlation coefficient.
+
+### Confidence interval of overall mean
+The $100(1-\alpha)$ level of confidence interval for overall mean $\mu$ in case of **random effect model** is,
+$$\hat{\mu} \pm t_{\alpha/2, N-a}\sqrt{\frac{\text{MS}_\text{treatment}}{N}}$$
 ]
