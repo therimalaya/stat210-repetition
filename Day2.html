@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Design of Experiment and Analysis of Variance</title>
+    <meta charset="utf-8">
+    <meta name="author" content="Raju Rimal" />
+    <link href="libs/remark-css/example.css" rel="stylesheet" />
+    <link rel="stylesheet" href="libs/fancybox/fb.min.css" type="text/css" media="all" />
+    <link rel="stylesheet" href="custom.css" type="text/css" media="all" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# Design of Experiment and Analysis of Variance
+## Repetition
+### Raju Rimal
+### 28 Aug, 2017
+
+---
+
+
+
+
+
+
+background-image: url(https://www.nmbu.no/sites/all/themes/nmbu_university/images/logo-nb.png)
+
+???
+
+Image credit: [NMBU](https://www.nmbu.no/sites/all/themes/nmbu_university/images/logo-nb.png)
+
+
+---
+class: center, middle, inverse
+
+# ANOVA Model
+
+
+---
+
+.left-column[
+# ANOVA Model
+## ANOVA table
+
+&lt;img src="Day2_files/figure-html/unnamed-chunk-3-1.png" width="90%" /&gt;
+
+
+```
+          Df  Sum Sq Mean Sq F value
+Weight1    2 1012033  506017    12.5
+Residuals 21  851962   40570        
+```
+]
+.right-column[
+
+.left-40-column[
+#### Hypothesis
+
+`\begin{aligned}
+H_0: \tau_i &amp;= 0 \text{ for i = 1, 2, 3} \\
+H_1: \tau_i &amp;\ne 0 \text{ for at least one }i
+\end{aligned}`
+
+#### Decision
+From &lt;a href="images/F005-2.png" data-fancybox&gt;F-table&lt;/a&gt;, `\(F_0 &gt; F_c\)`. So we reject `\(H_0\)` at 95% confidence level.
+
+]
+.right-60-column[
+&lt;img src="Day2_files/figure-html/unnamed-chunk-5-1.png" width="90%" style="display: block; margin: auto 0 auto auto;" /&gt;
+]
+
+### Questions
+a) What is the 95% **confidence interval of error variance**?
+
+b) We found that there is significant effect of first child's weight on second child, but how different is the effect of `High` from `low` and `medium`?
+
+]
+
+---
+
+.left-column[
+# ANOVA Model
+## Confidence Interval
+&lt;img src="Day2_files/figure-html/unnamed-chunk-6-1.png" width="90%" /&gt;
+&lt;img src="Day2_files/figure-html/unnamed-chunk-7-1.png" width="90%" /&gt;
+]
+.right-column[
+### Confidence interval of error variance
+`$$\dfrac{\text{SSE}}{\chi^2_{\alpha/2, N-a}} 
+\le \sigma^2 \le
+\dfrac{\text{SSE}}{\chi^2_{1-(\alpha/2), N-a}}$$`
+
+### Exam 2013 Data
+Using values in previous slide in above formula,
+`$$\left[
+\dfrac{851962.5}{35.479}, 
+\dfrac{851962.5}{10.283}
+\right] = \left[
+24013.2, 
+82852.4
+\right]$$`
+
+At **95% confidence level**, we can say that the true error variance `\(\sigma^2\)` lies between the interval (24013.2, 82852.4).
+
+&lt;h3&gt;&lt;a href="images/2011-1b.png" data-fancybox&gt;Exercise: Exam 2011 1(b)&lt;/a&gt;&lt;/h3&gt;
+]
+
+---
+.left-column[
+# ANOVA Model
+## Post-hoc Test
+&lt;img src="Day2_files/figure-html/unnamed-chunk-8-1.png" width="90%" /&gt;
+.side-caption[
+Think what will happen if you increase the confidence level from 0.05 to 0.1.
+]
+].right-column[
+### Tukey Pairwise Comparison
+For multiple testing, Tukey has suggested **studentized range statistic** as,
+`$$q = 
+\dfrac{\bar{y}_\text{max} - \bar{y}_\text{max}}
+{\sqrt{\text{MSE}/n}}$$`
+Compare `\(q\)` with `\(q_\alpha(a, f)\)` found in &lt;a href="images/qtable005.png" data-fancybox="gallery"&gt;table&lt;/a&gt;&lt;a href="images/qtable001.png" data-fancybox="gallery"&gt;&lt;/a&gt;. We declare a pair to be significantly different if `\(q &gt; q_{\alpha}(a, f)\)`.
+
+### Confidence Interval
+`$$(\bar{y}_i - \bar{y}_j) \pm q_\alpha(a, f)\sqrt{\frac{\text{MSE}}{n}}$$`
+`$$(\bar{y}_i - \bar{y}_j) - q_\alpha(a, f)\sqrt{\frac{\text{MSE}}{n}} \le \mu_i - \mu_j \le (\bar{y}_i - \bar{y}_j) + q_\alpha(a, f)\sqrt{\frac{\text{MSE}}{n}}$$`
+You can also check if this interval contains zero.
+]
+
+---
+
+.left-column[
+# ANOVA Model
+## Post-hoc Example
+&lt;img src="Day2_files/figure-html/unnamed-chunk-9-1.png" width="90%" /&gt;
+
+
+```
+ Weight1 mean n
+    High 3816 8
+     Low 3316 8
+  Medium 3614 8
+```
+
+].right-column[
+&lt;h3&gt;&lt;a href = "images/2013-2.png" data-fancybox="gallery"&gt;Exam 2013, 2(d)&lt;/a&gt;&lt;/h3&gt;
+
+From the &lt;a href="images/2013-a1.png" data-fancybox="gallery"&gt;Appendix 1&lt;/a&gt; and &lt;a href="images/2013-a4.png" data-fancybox="gallery"&gt;Appendix 4&lt;/a&gt;, we have,
+
+
+```
+          Df  Sum Sq Mean Sq F value   Pr(&gt;F)
+Weight1    2 1012033  506017    12.5 0.000269
+Residuals 21  851962   40570      NA       NA
+```
+
+Using &lt;a href="images/qtable005.png" data-fancybox="gallery"&gt;studentized, T-distribution table&lt;/a&gt; `\(q_{0.05}(3, 21) = 3.565\)`. So,
+
+`$$T_{0.05} = q_{0.05}(3, 21)\sqrt{\frac{40569.643}{8}} = 253.845$$`
+
+We have three possible pairs for comparison: `Low-High`, `Medium-High` and `Medium-Low`. The difference in their means are: &lt;code&gt;-500, -202.5, 297.5&lt;/code&gt; respectively. 
+
+If compared with `\(T_{0.05}(3, 21)\)`, we see that at 95% confidence level, we find `Low-High` and `Medium-Low` differ significantly.
+
+&lt;h3&gt;&lt;a href="pastexams/2013.pdf" target = "_blank"&gt;Exam 2015, 1(e)&lt;/a&gt;&lt;/h3&gt;
+]
+
+---
+
+.left-column[
+# ANOVA Model
+## Contrast test
+&lt;img src="Day2_files/figure-html/unnamed-chunk-12-1.png" width="90%" /&gt;
+].right-column[
+### Use cases
+
+- Comparison of one group with average of other group
+- Comparing treatments with control
+
+&lt;h3&gt;&lt;a href="images/2014-2d.png" data-fancybox&gt;Exam 2014: 2(d)&lt;/a&gt;&lt;/h3&gt;
+**Hypothesis:**
+`$$H_0: \frac{1}{2}(\mu_1 + \mu_2) - \frac{1}{2}(\mu_3 + \mu_4) = 0 \text{ vs }
+H_1: \frac{1}{2}(\mu_1 + \mu_2)- \frac{1}{2}(\mu_3 + \mu_4) \ne 0$$`
+
+**Decision:**
+
+From &lt;a href="images/2014-a8.png" data-fancybox&gt;Table 8&lt;/a&gt;, `\(\text{p-value }(0.065) &gt; 0.05\)`.
+&lt;details&gt;
+&lt;summary&gt;&lt;em&gt;What should we conclude?&lt;/em&gt;&lt;/summary&gt;
+.small[
+At 5% significance level we reject null hypothesis. So, we can not argue that expected differs significantly between January-June and July-December.
+]
+&lt;/details&gt;
+]
+
+---
+
+.left-column[
+# ANOVA Model
+## Contrast Calculation
+&lt;img src="Day2_files/figure-html/unnamed-chunk-13-1.png" width="90%" /&gt;
+Continue on Exam 2014: 2(d)
+].right-column[
+Before any compution, **formulate a hypothesis**.
+
+### Estimate of Contrast
+`$$\Gamma = \sum_{i = 1}^a{c_i\mu_i} = \frac{1}{2}(\mu_1 + \mu_2) - \frac{1}{2}(\mu_3 - \mu_4) = -5.5$$`
+Here the contrast coefficients `\(c_i\)` are: `\(1/2, 1/2, -1/2, -1/2\)`. Contrast coefficients sum to zero. For estimation of `\(\Gamma\)`, use respective sample mean. Also use &lt;a href="images/2014-a6.png" data-fancybox&gt;Table 6&lt;/a&gt; for following calculations.
+
+### Standard Error and test statistic
+`\begin{aligned}
+\text{SE}(\hat{\Gamma}) = \sqrt{\frac{\text{MSE}}{n}\sum_{i = 1}^a{c_i^2}} = 2.82 &amp;&amp; 
+t = \frac{\hat{\Gamma}}{\text{S.E}(\hat{\Gamma})} \sim t_{\alpha/2, N-a}
+\end{aligned}`
+]
+
+---
+
+.left-column[
+# ANOVA Model
+## Random Effect Model
+### Random factor
+`$$\tau_i \sim \mathrm{N}(0, \sigma_\tau^2)$$`
+### Fixed factor
+`$$\sum_{i = 1}^a{\tau_i} = 0$$`
+].right-column[
+### The Model
+`$$y_{ij} = \mu + \tau_i + \varepsilon_{ij} \text{ where, } \varepsilon_{ij} \sim \mathrm{N}(0, \sigma^2)\text{ and } \tau_i \sim \mathrm{N}(0, \sigma^2_\tau)$$`
+
+### Why Random effect model
+_Specific levels are not of interest_. General variation is more important. Levels of a factor are **randomly selected**. For example, if `besetning` (farm) is not of interest, we randomly sample such farms from a population of farm.
+
+Usually, **blocks** are taken as random factor.
+
+### A comparison with Fixed Effect Model
+_Specific levels of a factor is important_ than their general variation. These levels are **specifically chosen**. For instance, comparison of new and old drug where a particular drug is used for comparison.
+]
+
+---
+
+.left-column[
+# ANOVA Model
+## Random Effect Model
+
+&lt;img src="Day2_files/figure-html/unnamed-chunk-14-1.png" width="90%" /&gt;
+].right-column[
+&lt;h3&gt;&lt;a href="images/2011-1a.png" data-fancybox="gallery"&gt;Exam 2011: 1(a)&lt;/a&gt;&lt;/h3&gt;
+**Hypothesis:**
+`$$H_0: \sigma_\tau^2 = 0 \text{ vs } H_1: \sigma_\tau^2 &gt; 0$$`
+From &lt;a href="images/2011-a2.png" data-fancybox="gallery"&gt;Appendix 2&lt;/a&gt;, we see p-value is larger than `\(\alpha = 0.05\)`, we can not reject the null hypothesis. So, we claim that **at 95% confidence level** we claim that there is _not significant variation_ between the farms.
+
+### Estimates of Variance Components
+`$$\text{total variation var}(y_{ij}) = \sigma_\tau^2 + \sigma^2$$`
+We estimate them as,
+`$$\hat{\sigma} = \text{MSE} \text{ and } \hat{\sigma_\tau} = \frac{\text{MS}_\text{treatment} - \text{MSE}}{n}$$`
+]
+
+---
+
+.left-column[
+# ANOVA Model
+## Random Effect Model
+
+- &lt;a href="images/2011-1cd.png" data-fancybox&gt;Exam 2011: 1(c), 1(d)&lt;/a&gt;
+- &lt;a href="images/2012-1c.png" data-fancybox&gt;Exam 2012: 1(c)&lt;/a&gt;
+- &lt;a href="images/2013-1c.png" data-fancybox&gt;Exam 2013: 1(c)&lt;/a&gt;
+- &lt;a href="images/2014-1e.png" data-fancybox&gt;Exam 2014: 1(e)&lt;/a&gt;
+- &lt;a href="images/2015-2c.png" data-fancybox&gt;Exam 2015: 2(c)&lt;/a&gt;
+
+].right-column[
+### Intraclass Correlation Coefficient
+Proportion of variation between groups to total variation.
+`$$\rho = \frac{\sigma_\tau^2}{\sigma_\tau^2 + \sigma^2}$$`
+Using estimates of variance components, we can estimate intraclass correlation coefficient.
+
+### Confidence interval of overall mean
+The `\(100(1-\alpha)\)` level of confidence interval for overall mean `\(\mu\)` in case of **random effect model** is,
+`$$\hat{\mu} \pm t_{\alpha/2, N-a}\sqrt{\frac{\text{MS}_\text{treatment}}{N}}$$`
+]
+    </textarea>
+<script src="libs/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"ratio": "16:9",
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {window.dispatchEvent(new Event('resize'));});
+(function() {var d = document, s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler"); if (!r) return; s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }"; d.head.appendChild(s);})();</script>
+<script src="libs/jquery/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="libs/fancybox/fb.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="script.js" type="text/javascript" charset="utf-8"></script>
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  tex2jax: {
+    skipTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+  }
+});
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
