@@ -15,7 +15,7 @@ class: center, middle, inverse, title-slide
 # Design of Experiment and Analysis of Variance
 ## Repetition
 ### Raju Rimal
-### 29 Aug, 2017
+### 30 Aug, 2017
 
 ---
 
@@ -42,20 +42,20 @@ class: center, middle, inverse
 # ANOVA Model
 ## Random Effect Model
 
-- &lt;a href="images/2011-1cd.png" data-fancybox&gt;Exam 2011: 1(c), 1(d)&lt;/a&gt;
-- &lt;a href="images/2012-1c.png" data-fancybox&gt;Exam 2012: 1(c)&lt;/a&gt;
-- &lt;a href="images/2013-1c.png" data-fancybox&gt;Exam 2013: 1(c)&lt;/a&gt;
-- &lt;a href="images/2014-1e.png" data-fancybox&gt;Exam 2014: 1(e)&lt;/a&gt;
-- &lt;a href="images/2015-2c.png" data-fancybox&gt;Exam 2015: 2(c)&lt;/a&gt;
+- &lt;a href="images/2011-1cd.png" data-fancybox="2011" data-caption="Exam 2011: 1(c) and 1(d)"&gt;Exam 2011: 1(c), 1(d)&lt;/a&gt;&lt;a href="images/2011-a2.png" data-fancybox="2011" data-caption="Appendix 2"&gt;&lt;/a&gt;
+- &lt;a href="images/2012-1c.png" data-fancybox="2012" data-caption="Exam 2012: 1(c)"&gt;Exam 2012: 1(c)&lt;/a&gt;&lt;a href="images/2012-a2.png" data-fancybox="2012" data-caption="Appendix 2"&gt;&lt;/a&gt;
+- &lt;a href="images/2013-1c.png" data-fancybox="2013" data-caption="Exam 2013: 1(c)"&gt;Exam 2013: 1(c)&lt;/a&gt;&lt;a href="images/2013-a2.png" data-fancybox="2013" data-caption="Appendix 2"&gt;&lt;/a&gt;
+- &lt;a href="images/2014-1e.png" data-fancybox="2014" data-caption="Exam 2014: 1(e)"&gt;Exam 2014: 1(e)&lt;/a&gt;&lt;a href="images/2014-a4.png" data-fancybox="2014" data-caption="Table 4"&gt;&lt;/a&gt;
+- &lt;a href="images/2015-2c.png" data-fancybox="2015" data-caption="Exam 2015: 2(c)"&gt;Exam 2015: 2(c)&lt;/a&gt;&lt;a href="images/2015-a6.png" data-fancybox="2015" data-caption="Table 6"&gt;&lt;/a&gt;
 
 ].right-column[
 ### Intraclass Correlation Coefficient
 Proportion of variation between groups to total variation.
 `$$\rho = \frac{\sigma_\tau^2}{\sigma_\tau^2 + \sigma^2}$$`
-Using estimates of variance components, we can estimate intraclass correlation coefficient.
+Using estimates of variance components, we can estimate **intraclass correlation coefficient**.
 
 ### Confidence interval of overall mean
-The `\(100(1-\alpha)\)` level of confidence interval for overall mean `\(\mu\)` in case of **random effect model** is,
+The `\(100(1-\alpha)\)` level of confidence interval for overall mean `\(\mu\)` in case of random effect model is,
 `$$\hat{\mu} \pm t_{\alpha/2, a-1}\sqrt{\frac{\text{MS}_\text{treatment}}{N}}$$`
 (Refer to Thore's Lecture on Random effect Model)
 ]
@@ -72,14 +72,15 @@ The `\(100(1-\alpha)\)` level of confidence interval for overall mean `\(\mu\)` 
 
 ].right-column[
 ### Interpretation of Intraclass correlation coefficient
-- Proportaion of variation between groups to total variation
-- correlation between the observation within same group
+- *Proportaion of variation* between groups to total variation
+- Correlation between the observation **within same group**
+- In `besettning` and `fettprosent` example, if the correlation is 0.90 shows that the major variation in `fettprosent` is explained by besettning and thus the `cows` in each besettning is more identical and has correlation of 0.90.
 
 
 ### Interpretation of Overall Mean
-In case of random effect model, we can interpret overall mean for whole population
+We can extend interpretation of overall mean for whole population
 
-For example, if `besetning` (farms) is a random factor, than the overall mean can refer to the average `fettprosent` in the milk from complete population of besetning.
+For example, if `besetning` (farms) is a random factor, than the overall mean can refer to the average `fettprosent` in the milk from the entile population of besetning.
 ]
 
 ---
@@ -299,7 +300,7 @@ In compulsory assignment 3(c), you are asked to choose between &lt;a href="javas
 ]
 
 &lt;details&gt;
-&lt;summary&gt;What happened when removing &lt;code&gt;Dommer&lt;/code&gt; from &lt;code&gt;Model 1&lt;/code&gt;?&lt;/summary&gt;
+&lt;summary&gt;What happened when &lt;code&gt;Dommer&lt;/code&gt; is removed from &lt;code&gt;Model 1&lt;/code&gt;?&lt;/summary&gt;
 
 When we remove a significant factor, its variation adds up to residual rising the model error. When the model error increases, the difference between the treatment becomes more difficult to see.
 
@@ -307,13 +308,65 @@ When we remove a significant factor, its variation adds up to residual rising th
 
 
 ### Interaction Term and Degree of freedom
-There is only one observation for each combination of `Fortype` and `Dommer`. So, If we include _interaction term_ we will not have any _degree of freedom_ left for residuals. So, we will only be able to find the estimate, but can not perform any kind of test for there significance.
 
+With only one observation for each combination of `Fortype` and `Dommer` we cannot include _interaction term_ in the model. 
+
+No _degree of freedom_ left for residuals. So, we will only be able to find the estimate, but can not perform any kind of test for there significance.
 ]
+
+---
+
+.left-column[
+# ANOVA Model
+## Model Assessment
+
+
+
+- Error should be random, i.e. free from any kind of pattern
+
+- Error should be have constant variation for all the groups
+
+].right-column[
+### Assumption of random error with constant variance
+&lt;img src="Day3_files/figure-html/unnamed-chunk-18-1.png" width="48%" /&gt;&lt;img src="Day3_files/figure-html/unnamed-chunk-18-2.png" width="48%" /&gt;
+### Normality of Error term
+]
+
+---
+
+.left-column[
+# ANOVA Model
+## Model Assessment
+
+
+
+- Error (Residuals) should be randomly distribution
+
+- All the error should align with Normal Q-Q plot
+
+- You can also see histogram and/or density plot and compare with normal distribution plot
+
+].right-column[
+### Assumption of random error with constant variance
+
+### Normality of Error term
+&lt;img src="Day3_files/figure-html/unnamed-chunk-20-1.png" width="45%" /&gt;&lt;img src="Day3_files/figure-html/unnamed-chunk-20-2.png" width="45%" /&gt;&lt;img src="Day3_files/figure-html/unnamed-chunk-20-3.png" width="45%" /&gt;&lt;img src="Day3_files/figure-html/unnamed-chunk-20-4.png" width="45%" /&gt;
+]
+
+---
+class: center, middle, inverse
+
+# Best of Luck
+# Lykke til
+
+---
+class: center, middle, inverse
+
+&lt;img src="images/NMBUwhite.png" width="30%" style="display: block; margin: auto;" /&gt;
     </textarea>
 <script src="libs/remark-latest.min.js"></script>
 <script>var slideshow = remark.create({
-"ratio": "16:10",
+"ratio": "16:9",
 "highlightStyle": "github",
 "highlightLines": true,
 "countIncrementalSlides": false

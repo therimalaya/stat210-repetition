@@ -11,7 +11,7 @@ output:
     lib_dir: libs
     chakra: 'libs/remark-latest.min.js'
     nature:
-      ratio: 16:10
+      ratio: 16:9
       highlightStyle: github
       highlightLines: true
       countIncrementalSlides: false
@@ -158,20 +158,20 @@ class: center, middle, inverse
 # ANOVA Model
 ## Random Effect Model
 
-- <a href="images/2011-1cd.png" data-fancybox>Exam 2011: 1(c), 1(d)</a>
-- <a href="images/2012-1c.png" data-fancybox>Exam 2012: 1(c)</a>
-- <a href="images/2013-1c.png" data-fancybox>Exam 2013: 1(c)</a>
-- <a href="images/2014-1e.png" data-fancybox>Exam 2014: 1(e)</a>
-- <a href="images/2015-2c.png" data-fancybox>Exam 2015: 2(c)</a>
+- <a href="images/2011-1cd.png" data-fancybox="2011" data-caption="Exam 2011: 1(c) and 1(d)">Exam 2011: 1(c), 1(d)</a><a href="images/2011-a2.png" data-fancybox="2011" data-caption="Appendix 2"></a>
+- <a href="images/2012-1c.png" data-fancybox="2012" data-caption="Exam 2012: 1(c)">Exam 2012: 1(c)</a><a href="images/2012-a2.png" data-fancybox="2012" data-caption="Appendix 2"></a>
+- <a href="images/2013-1c.png" data-fancybox="2013" data-caption="Exam 2013: 1(c)">Exam 2013: 1(c)</a><a href="images/2013-a2.png" data-fancybox="2013" data-caption="Appendix 2"></a>
+- <a href="images/2014-1e.png" data-fancybox="2014" data-caption="Exam 2014: 1(e)">Exam 2014: 1(e)</a><a href="images/2014-a4.png" data-fancybox="2014" data-caption="Table 4"></a>
+- <a href="images/2015-2c.png" data-fancybox="2015" data-caption="Exam 2015: 2(c)">Exam 2015: 2(c)</a><a href="images/2015-a6.png" data-fancybox="2015" data-caption="Table 6"></a>
 
 ].right-column[
 ### Intraclass Correlation Coefficient
 Proportion of variation between groups to total variation.
 $$\rho = \frac{\sigma_\tau^2}{\sigma_\tau^2 + \sigma^2}$$
-Using estimates of variance components, we can estimate intraclass correlation coefficient.
+Using estimates of variance components, we can estimate **intraclass correlation coefficient**.
 
 ### Confidence interval of overall mean
-The $100(1-\alpha)$ level of confidence interval for overall mean $\mu$ in case of **random effect model** is,
+The $100(1-\alpha)$ level of confidence interval for overall mean $\mu$ in case of random effect model is,
 $$\hat{\mu} \pm t_{\alpha/2, a-1}\sqrt{\frac{\text{MS}_\text{treatment}}{N}}$$
 (Refer to Thore's Lecture on Random effect Model)
 ]
@@ -188,14 +188,15 @@ $$\hat{\mu} \pm t_{\alpha/2, a-1}\sqrt{\frac{\text{MS}_\text{treatment}}{N}}$$
 
 ].right-column[
 ### Interpretation of Intraclass correlation coefficient
-- Proportaion of variation between groups to total variation
-- correlation between the observation within same group
+- *Proportaion of variation* between groups to total variation
+- Correlation between the observation **within same group**
+- In `besettning` and `fettprosent` example, if the correlation is 0.90 shows that the major variation in `fettprosent` is explained by besettning and thus the `cows` in each besettning is more identical and has correlation of 0.90.
 
 
 ### Interpretation of Overall Mean
-In case of random effect model, we can interpret overall mean for whole population
+We can extend interpretation of overall mean for whole population
 
-For example, if `besetning` (farms) is a random factor, than the overall mean can refer to the average `fettprosent` in the milk from complete population of besetning.
+For example, if `besetning` (farms) is a random factor, than the overall mean can refer to the average `fettprosent` in the milk from the entile population of besetning.
 ]
 
 ---
@@ -251,7 +252,7 @@ Here, $L = `r L`$ and $U = `r U`$, so, the confidence interval for $\rho$ is (`r
 ```{r}
 load("_data/Exam2013.RData")
 ```
-```{r, fig.width=3.5, out.width='90%', fig.asp = 1, fig.retina=2}
+```{r, fig.width=3.5, out.width='90%', fig.asp = 0.8, fig.retina=2}
 plt <- qplot(Weight1, Weight2, facets = Gender ~ ., 
       data = x2013, geom = c("point")) +
     stat_summary(fun.y = mean, geom = "line", 
@@ -294,7 +295,7 @@ anova(mdl)
 ```{r}
 load("_data/Exam2013.RData")
 ```
-```{r, fig.width=3.5, out.width='90%', fig.asp = 0.8, fig.retina=2}
+```{r, fig.width=3.5, out.width='90%', fig.asp = 0.75, fig.retina=2}
 plt <- qplot(Weight1, Weight2, facets = Gender ~ ., 
       data = x2013, geom = c("point")) +
     stat_summary(fun.y = mean, geom = "line", 
@@ -346,19 +347,21 @@ $$\hat{y}_{\texttt{High, girl}} = `r coef(mdl)[1]` + (`r coef(mdl)[2]`) + (`r -1
 .left-column[
 # ANOVA Model
 ## Two factors
-```{r, fig.width=4.5, out.width='90%', fig.asp = 0.9, fig.retina=2}
+```{r, fig.width=4, out.width='90%', fig.asp = 0.6, fig.retina=2}
 load("_data/comp3.RData")
 ggplot(dommere, aes(Fortype, Poeng)) +
     geom_point() +
-    facet_grid(Dommer ~ Fortype, scales = 'free_x')
+    facet_grid(. ~ Dommer, scales = 'free_x') +
+    coord_flip()
 ```
 ```{r, fig.width=4, out.width='90%', fig.asp = 0.5, fig.retina=2}
 ggplot(dommere, aes(Fortype, Poeng)) +
-    geom_point() +
-    stat_summary(fun.y = mean, geom = "point",
-      color = "red") +
+    geom_point(color = "darkgray") +
     stat_summary(fun.data = mean_se, geom = "errorbar",
-      color = "red", width = 0.1)
+      color = "brown2", width = 0.1) +
+    stat_summary(fun.y = mean, geom = "point",
+      color = "navyblue") +
+    coord_flip()
 ```
 
 
@@ -391,7 +394,7 @@ knitr::kable(anova(mdl2), format = "html")
 ]
 
 <details>
-<summary>What happened when removing <code>Dommer</code> from <code>Model 1</code>?</summary>
+<summary>What happened when <code>Dommer</code> is removed from <code>Model 1</code>?</summary>
 
 When we remove a significant factor, its variation adds up to residual rising the model error. When the model error increases, the difference between the treatment becomes more difficult to see.
 
@@ -399,6 +402,100 @@ When we remove a significant factor, its variation adds up to residual rising th
 
 
 ### Interaction Term and Degree of freedom
-There is only one observation for each combination of `Fortype` and `Dommer`. So, If we include _interaction term_ we will not have any _degree of freedom_ left for residuals. So, we will only be able to find the estimate, but can not perform any kind of test for there significance.
 
+With only one observation for each combination of `Fortype` and `Dommer` we cannot include _interaction term_ in the model. 
+
+No _degree of freedom_ left for residuals. So, we will only be able to find the estimate, but can not perform any kind of test for there significance.
 ]
+
+---
+
+.left-column[
+# ANOVA Model
+## Model Assessment
+
+```{r}
+mdl1 <- lm(weight ~ group, data = PlantGrowth)
+mdl2 <- lm(uptake ~ Treatment, data = CO2)
+```
+
+- Error should be random, i.e. free from any kind of pattern
+
+- Error should be have constant variation for all the groups
+
+].right-column[
+### Assumption of random error with constant variance
+```{r, fig.width = 3.5, out.width = "48%", fig.retina = 2, fig.asp = 0.9}
+plt1 <- ggplot(mdl1, aes(.fitted, .resid)) +
+    geom_point() +
+    geom_smooth(method = "lm", se = FALSE) +
+    labs(x = "Fitted", y = "Residual") +
+    ggtitle("Residuals vs Fitted", capture.output(mdl1$call))
+plt2 <- ggplot(mdl2, aes(.fitted, .resid)) +
+    geom_point() +
+    geom_smooth(method = "lm", se = FALSE) +
+    labs(x = "Fitted", y = "Residual") +
+    ggtitle("Residuals vs Fitted", capture.output(mdl2$call))
+plt1
+plt2
+```
+### Normality of Error term
+]
+
+---
+
+.left-column[
+# ANOVA Model
+## Model Assessment
+
+```{r}
+mdl1 <- lm(weight ~ group, data = PlantGrowth)
+mdl2 <- lm(uptake ~ Treatment, data = CO2)
+```
+
+- Error (Residuals) should be randomly distribution
+
+- All the error should align with Normal Q-Q plot
+
+- You can also see histogram and/or density plot and compare with normal distribution plot
+
+].right-column[
+### Assumption of random error with constant variance
+
+### Normality of Error term
+```{r, fig.width = 3.5, out.width = "45%", fig.retina = 2, fig.asp = 0.5}
+plt1 <- ggplot(mdl1) +
+    stat_qq(aes(sample = .stdresid), shape = 21) +
+    geom_abline()
+plt2 <- ggplot(mdl2) +
+    stat_qq(aes(sample = .stdresid), shape = 21) +
+    geom_abline()
+plt3 <- ggplot(mdl1, aes(.resid)) +
+    geom_line(stat = "density") +
+    stat_function(fun = dnorm, color = "red",
+    args = list(sd = sigma(mdl1))) +
+    labs(x = "Residuals")
+plt4 <- ggplot(mdl2, aes(.resid)) +
+    geom_line(stat = "density") +
+    stat_function(fun = dnorm, color = "red",
+    args = list(sd = sigma(mdl2))) +
+    labs(x = "Residuals")
+plt1
+plt2
+plt3
+plt4
+```
+]
+
+---
+class: center, middle, inverse
+
+# Best of Luck
+# Lykke til
+
+---
+class: center, middle, inverse
+
+```{r, out.width="30%", fig.retina=2, fig.align='center'}
+knitr::include_graphics("images/NMBUwhite.png")
+```
