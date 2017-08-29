@@ -28,29 +28,48 @@ library(tidyverse)
 library(gganimate)
 ```
 ```{r load-function, include=FALSE}
-get_fplot <- function(alpha, deg.freedom, max_limit, fvalue = NULL) {
-d <- deg.freedom
-lmt <- max_limit
-plt <- ggplot(data.frame(x = 0:lmt), aes(x)) +
-  stat_function(fun = df, args = list(df1 = d[1], df2 = d[2]), n = 200) +
-  stat_function(fun = df, args = list(df1 = d[1], df2 = d[2]), n = 200, 
-                xlim = c(qf(alpha, df1 = d[1], df2 = d[2], lower.tail = FALSE), lmt), 
-                geom = "area") +
-  ggtitle(paste("F-distribution with", paste(d, collapse = " and "), "df"),
-          paste(alpha, "level of significance")) +
-  labs(x = "F", y = NULL) +
-  annotate(x = qf(alpha, df1 = d[1], df2 = d[2], lower.tail = FALSE),
-           color = "red",
-           ymin = 0, ymax = 0.1, geom = "linerange") +
-  annotate(x = qf(alpha, df1 = d[1], df2 = d[2], lower.tail = FALSE),
-           label = paste("F =", round(qf(alpha, df1 = d[1], df2 = d[2], lower.tail = FALSE), 3)), 
-           geom = "text", y = 0.15, hjust = 0)
-if (!is.null(fvalue)){
-  plt <- plt +
-    annotate(x = fvalue, y = 0, geom = "point", color = "red") +
-    annotate(x = fvalue, y = 0, geom = "text", label = paste("F0:", round(fvalue, 3)), hjust = 1.2)
-}
-return(plt)
+get_fplot <- function(alpha, deg.freedom, max_limit, fvalue = NULL, twosided = FALSE, shaded = TRUE) {
+  d <- deg.freedom
+  lmt <- max_limit
+  plt <- ggplot(data.frame(x = 0:lmt), aes(x)) +
+    stat_function(fun = "df", args = list(df1 = d[1], df2 = d[2]), n = 200) +
+    ggtitle(paste("F-distribution with", paste(d, collapse = " and "), "df"),
+            paste(ifelse(twosided, 2 * alpha, alpha), "level of significance")) +
+    labs(x = "F", y = NULL) +
+    annotate(x = qf(alpha, df1 = d[1], df2 = d[2], lower.tail = FALSE),
+             color = "red",
+             ymin = 0, ymax = 0.1, geom = "linerange") +
+    annotate(x = qf(alpha, df1 = d[1], df2 = d[2], lower.tail = FALSE),
+             label = paste("F =", round(qf(alpha, df1 = d[1], df2 = d[2], lower.tail = FALSE), 3)), 
+             geom = "text", y = 0.15, hjust = 0)
+  if (shaded) {
+    plt <- plt +
+      stat_function(fun = "df", args = list(df1 = d[1], df2 = d[2]), n = 200, 
+                    xlim = c(qf(alpha, df1 = d[1], df2 = d[2], lower.tail = FALSE), lmt), 
+                    geom = "area")
+  }
+  if (shaded & twosided) {
+    plt <- plt +
+      stat_function(fun = "df", args = list(df1 = d[1], df2 = d[2]), n = 200, 
+                    xlim = c(0, qf(alpha, df1 = d[1], df2 = d[2], lower.tail = TRUE)), 
+                    geom = "area")
+  }
+  if (twosided) {
+    plt <- plt +
+      annotate(x = qf(alpha, df1 = d[1], df2 = d[2], lower.tail = TRUE),
+               color = "red", geom = "linerange",
+               ymin = 0, ymax = 0.1) +
+      annotate(x = qf(alpha, df1 = d[1], df2 = d[2], lower.tail = TRUE),
+               label = paste("F =", round(qf(alpha, df1 = d[1], df2 = d[2], 
+                                             lower.tail = TRUE), 3)), 
+               geom = "text", y = 0.15, hjust = 0)
+  }
+  if (!is.null(fvalue)){
+    plt <- plt +
+      annotate(x = fvalue, y = 0, geom = "point", color = "red") +
+      annotate(x = fvalue, y = 0, geom = "text", label = paste("F0:", round(fvalue, 3)), hjust = 1.2)
+  }
+  return(plt)
 }
 get_chisq_plot <- function(alpha, deg.freedom, max_limit, test_statistic = NULL){
 d <- deg.freedom
@@ -162,8 +181,224 @@ $$\hat{\mu} \pm t_{\alpha/2, a-1}\sqrt{\frac{\text{MS}_\text{treatment}}{N}}$$
 .left-column[
 # ANOVA Model
 ## Random Effect Model
+### Intraclass Correlation
+$$\rho = \frac{\sigma_\tau^2}{\sigma_\tau^2 + \sigma^2}$$
+### CI for overall mean
+$$\hat{\mu} \pm t_{\alpha/2, a-1}\sqrt{\frac{\text{MS}_\text{treatment}}{N}}$$
+
 ].right-column[
 ### Interpretation of Intraclass correlation coefficient
+- Proportaion of variation between groups to total variation
+- correlation between the observation within same group
+
 
 ### Interpretation of Overall Mean
+In case of random effect model, we can interpret overall mean for whole population
+
+For example, if `besetning` (farms) is a random factor, than the overall mean can refer to the average `fettprosent` in the milk from complete population of besetning.
+]
+
+---
+
+.left-column[
+# ANOVA Model
+## Random Effect Model
+```{r}
+load("_data/Exam2014-1.Rdata")
+mdl <- mixlm::lm(wear ~ r(child), data = childwear)
+aov_out <- mixlm::Anova(mdl, type = "III")
+```
+```{r, fig.width=3.5, out.width='90%', fig.asp = 1, fig.retina=2}
+get_fplot(0.025, c(8, 9), 10, twosided = TRUE, shaded = FALSE)
+```
+.side-caption[
+- <a href="images/2014-a4.png" data-fancybox="2014">Table 4: Anova Output</a>
+- <a href="images/F0025.png" data-fancybox="2014">F distribution table at 0.025 level</a>
+]].right-column[
+### Confidene interval for correlation
+$L$ and $U$ gives the confidence interval for $\sigma_\tau^2/\sigma^2$.
+
+\begin{aligned}
+L &= \frac{1}{n}\left(
+\frac{\text{MS}_\text{treatments}}{\text{MSE}} \frac{1}{F_{\alpha/2, a-1, N-a}} - 1
+\right) \\
+U &= \frac{1}{n}\left(
+\frac{\text{MS}_\text{treatments}}{\text{MSE}} \frac{1}{F_{1-\alpha/2, a-1, N-a}} - 1
+\right)
+\end{aligned}
+
+So, the confidence interval for $\rho = \frac{\sigma_\tau^2}{(\sigma_\tau^2 + \sigma^2)}$ is,
+$$\frac{L}{1 + L} \le \frac{\sigma_\tau^2}{\sigma_\tau^2 + \sigma^2} \le \frac{U}{1 + U}$$
+
+<h3><a href="images/2014-1e.png" data-fancybox="2014">Exam 2014: 1(e)</a></h3>
+
+```{r}
+ms <- aov_out$anova$`Mean Sq`
+df <- aov_out$anova$Df
+L <- 1/2 * (ms[1]/ms[2] * 1/qf(0.025, df[1], df[2], lower.tail = FALSE) - 1)
+U <- 1/2 * (ms[1]/ms[2] * 1/qf(0.025, df[1], df[2], lower.tail = TRUE) - 1)
+rho_ci <- c(L / (1 + L), U / (1 + U))
+```
+
+Here, $L = `r L`$ and $U = `r U`$, so, the confidence interval for $\rho$ is (`r rho_ci`).
+]
+
+---
+
+.left-column[
+# ANOVA Model
+## Two factors
+```{r}
+load("_data/Exam2013.RData")
+```
+```{r, fig.width=3.5, out.width='90%', fig.asp = 1, fig.retina=2}
+plt <- qplot(Weight1, Weight2, facets = Gender ~ ., 
+      data = x2013, geom = c("point")) +
+    stat_summary(fun.y = mean, geom = "line", 
+                 color = "blue", group = 1) +
+    stat_summary(fun.y = mean, geom = "point", 
+                 color = "red", shape = 15, size = 2.5) +
+    stat_summary(fun.data = mean_se, geom = "errorbar",
+                 color = "red", width = 0.1)
+plt
+```
+.side-caption[
+- Do we need interaction?
+- How about Gender, is it significant?
+- What can we see if interaction is not significant?
+- Is blocking a two factor model?
+]].right-column[
+
+### ANOVA model with two factors
+$$y_{ijk} = \mu + \tau_i + \beta_j + (\tau\beta)_{ij} + \varepsilon_{ijk}$$
+where, $\varepsilon_{ijk} \sim N(0, \sigma^2)$, $i = 1, 2, \ldots, a(3)$, $j = 1, 2, \ldots, b(2)$ and $k = 1, 2, \ldots n(4)$
+When $\mu$ is a overall mean, we will have,
+
+\begin{aligned}
+\sum_{i = 1}^a{\tau_i} = 0, && \sum_{j = 1}^b{\beta_j} = 0, && \sum_{i = 1}^a\sum_{j = 1}^b{(\tau\beta)_{ij}} = 0
+\end{aligned}
+
+<h3><a href="images/2013-2ab.png" data-fancybox="2013">Exam 2013: 2(a)</a><a href="images/2013-a3.png" data-fancybox="2013"></a></h3>
+
+```{r}
+mdl <- mixlm::lm(Weight2 ~ Weight1*Gender, data = x2013)
+anova(mdl)
+```
+]
+
+---
+
+.left-column[
+# ANOVA Model
+## Two factors
+```{r}
+load("_data/Exam2013.RData")
+```
+```{r, fig.width=3.5, out.width='90%', fig.asp = 0.8, fig.retina=2}
+plt <- qplot(Weight1, Weight2, facets = Gender ~ ., 
+      data = x2013, geom = c("point")) +
+    stat_summary(fun.y = mean, geom = "line", 
+                 color = "blue", group = 1) +
+    stat_summary(fun.y = mean, geom = "point", 
+                 color = "red", shape = 15, size = 2.5) +
+    stat_summary(fun.data = mean_se, geom = "errorbar",
+                 color = "red", width = 0.1)
+plt
+```
+```{r}
+coef(summary(mdl))[, 1, drop = F]
+```
+
+].right-column[
+
+### Prediction
+<a href="images/2013-2ab.png" data-fancybox="2013">Exam 2013: 2(b)</a><a href="images/2013-a3.png" data-fancybox="2013"></a> wants us to predict the weight of second child (girl) if the first child has `High` weight.
+
+**The Model:**
+$$y_{ijk} = \mu + \tau_i + \beta_j + (\tau\beta)_{ij} + \varepsilon_{ijk}$$
+where, $\varepsilon_{ijk} \sim N(0, \sigma^2)$, $i = 1, 2, 3$, $j = 1, 2$ and $k = 1, 2, 3, 4$
+So, the predicted weight for `Girl` child whose first sibling has `High` weight is,
+
+$$\hat{y}_{\texttt{High, girl}} = \hat{\mu} + \hat{\tau}_\texttt{High} + \hat{\beta}_\texttt{Girl} + (\widehat{\tau\beta})_\texttt{High, Girl}$$
+.right-column[
+```{r}
+int_coef <- data.frame(coef = coef(mdl)[5:6]) %>% 
+  rownames_to_column("factors")
+int_coef %>% 
+    separate(factors, c("factor1", "factor2"), ":") %>% 
+    spread(factor1, coef) %>% 
+    mutate(`Weight1(Medium)` = NA) %>% 
+    add_row(factor2 = "Gender(Girl)")
+```
+].left-column[
+```{r}
+data.frame(coef = coef(mdl)[2:3]) %>% 
+  rownames_to_column("factor1") %>% 
+  add_row(factor1 = "Weight1(Medium)")
+```
+]
+.full-width[
+$$\hat{y}_{\texttt{High, girl}} = `r coef(mdl)[1]` + (`r coef(mdl)[2]`) + (`r -1 * coef(mdl)[4]`) + (`r -1 * coef(mdl)[5]`) = `r coef(mdl)[1] + coef(mdl)[2] + -1 * coef(mdl)[4] + -1 * coef(mdl)[5]`\text{ gram}$$
+]]
+
+---
+
+.left-column[
+# ANOVA Model
+## Two factors
+```{r, fig.width=4.5, out.width='90%', fig.asp = 0.9, fig.retina=2}
+load("_data/comp3.RData")
+ggplot(dommere, aes(Fortype, Poeng)) +
+    geom_point() +
+    facet_grid(Dommer ~ Fortype, scales = 'free_x')
+```
+```{r, fig.width=4, out.width='90%', fig.asp = 0.5, fig.retina=2}
+ggplot(dommere, aes(Fortype, Poeng)) +
+    geom_point() +
+    stat_summary(fun.y = mean, geom = "point",
+      color = "red") +
+    stat_summary(fun.data = mean_se, geom = "errorbar",
+      color = "red", width = 0.1)
+```
+
+
+```{r, include = FALSE}
+require(mixlm)
+mdl1 <- lm(Poeng ~ Fortype + Dommer, data = dommere)
+mdl2 <- lm(Poeng ~ Fortype, data = dommere)
+```
+
+
+].right-column[
+### Reducing a two factors Model
+In compulsory assignment 3(c), you are asked to choose between <a href="javascript:;" data-fancybox data-src="#hidden-content">two models.</a>
+
+.hidden[
+<div id="hidden-content">
+<h3>Model 1</h3>
+
+```{r}
+options(knitr.kable.NA = '')
+knitr::kable(anova(mdl1), format = "html")
+```
+
+<h3>Model 2</h3>
+```{r}
+knitr::kable(anova(mdl2), format = "html")
+```
+
+</div>
+]
+
+<details>
+<summary>What happened when removing <code>Dommer</code> from <code>Model 1</code>?</summary>
+
+When we remove a significant factor, its variation adds up to residual rising the model error. When the model error increases, the difference between the treatment becomes more difficult to see.
+
+</details>
+
+
+### Interaction Term and Degree of freedom
+There is only one observation for each combination of `Fortype` and `Dommer`. So, If we include _interaction term_ we will not have any _degree of freedom_ left for residuals. So, we will only be able to find the estimate, but can not perform any kind of test for there significance.
+
 ]

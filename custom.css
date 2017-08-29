@@ -35,6 +35,9 @@ h1, h2, h3, h4, h5, h6, a{
 .spread, .spread summary{
   line-height: 2em;
 }
+summary{
+  padding-bottom: 0.8em;
+}
 .mjx-chtml {
   font-size: 98%!important;
 }
@@ -86,4 +89,9 @@ h1, h2, h3, h4, h5, h6, a{
 #use-cases~ul{
   list-style-type: square;
   padding-left: 25px;
+}
+.full-width{
+  width: 100%;
+  display: block;
+  clear: both;
 }

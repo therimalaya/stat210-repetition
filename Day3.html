@@ -65,10 +65,250 @@ The `\(100(1-\alpha)\)` level of confidence interval for overall mean `\(\mu\)` 
 .left-column[
 # ANOVA Model
 ## Random Effect Model
+### Intraclass Correlation
+`$$\rho = \frac{\sigma_\tau^2}{\sigma_\tau^2 + \sigma^2}$$`
+### CI for overall mean
+`$$\hat{\mu} \pm t_{\alpha/2, a-1}\sqrt{\frac{\text{MS}_\text{treatment}}{N}}$$`
+
 ].right-column[
 ### Interpretation of Intraclass correlation coefficient
+- Proportaion of variation between groups to total variation
+- correlation between the observation within same group
+
 
 ### Interpretation of Overall Mean
+In case of random effect model, we can interpret overall mean for whole population
+
+For example, if `besetning` (farms) is a random factor, than the overall mean can refer to the average `fettprosent` in the milk from complete population of besetning.
+]
+
+---
+
+.left-column[
+# ANOVA Model
+## Random Effect Model
+
+&lt;img src="Day3_files/figure-html/unnamed-chunk-2-1.png" width="90%" /&gt;
+.side-caption[
+- &lt;a href="images/2014-a4.png" data-fancybox="2014"&gt;Table 4: Anova Output&lt;/a&gt;
+- &lt;a href="images/F0025.png" data-fancybox="2014"&gt;F distribution table at 0.025 level&lt;/a&gt;
+]].right-column[
+### Confidene interval for correlation
+`\(L\)` and `\(U\)` gives the confidence interval for `\(\sigma_\tau^2/\sigma^2\)`.
+
+`\begin{aligned}
+L &amp;= \frac{1}{n}\left(
+\frac{\text{MS}_\text{treatments}}{\text{MSE}} \frac{1}{F_{\alpha/2, a-1, N-a}} - 1
+\right) \\
+U &amp;= \frac{1}{n}\left(
+\frac{\text{MS}_\text{treatments}}{\text{MSE}} \frac{1}{F_{1-\alpha/2, a-1, N-a}} - 1
+\right)
+\end{aligned}`
+
+So, the confidence interval for `\(\rho = \frac{\sigma_\tau^2}{(\sigma_\tau^2 + \sigma^2)}\)` is,
+`$$\frac{L}{1 + L} \le \frac{\sigma_\tau^2}{\sigma_\tau^2 + \sigma^2} \le \frac{U}{1 + U}$$`
+
+&lt;h3&gt;&lt;a href="images/2014-1e.png" data-fancybox="2014"&gt;Exam 2014: 1(e)&lt;/a&gt;&lt;/h3&gt;
+
+
+
+Here, `\(L = 8.39\)` and `\(U = 158.385\)`, so, the confidence interval for `\(\rho\)` is (0.893, 0.994).
+]
+
+---
+
+.left-column[
+# ANOVA Model
+## Two factors
+
+&lt;img src="Day3_files/figure-html/unnamed-chunk-5-1.png" width="90%" /&gt;
+.side-caption[
+- Do we need interaction?
+- How about Gender, is it significant?
+- What can we see if interaction is not significant?
+- Is blocking a two factor model?
+]].right-column[
+
+### ANOVA model with two factors
+`$$y_{ijk} = \mu + \tau_i + \beta_j + (\tau\beta)_{ij} + \varepsilon_{ijk}$$`
+where, `\(\varepsilon_{ijk} \sim N(0, \sigma^2)\)`, `\(i = 1, 2, \ldots, a(3)\)`, `\(j = 1, 2, \ldots, b(2)\)` and `\(k = 1, 2, \ldots n(4)\)`
+When `\(\mu\)` is a overall mean, we will have,
+
+`\begin{aligned}
+\sum_{i = 1}^a{\tau_i} = 0, &amp;&amp; \sum_{j = 1}^b{\beta_j} = 0, &amp;&amp; \sum_{i = 1}^a\sum_{j = 1}^b{(\tau\beta)_{ij}} = 0
+\end{aligned}`
+
+&lt;h3&gt;&lt;a href="images/2013-2ab.png" data-fancybox="2013"&gt;Exam 2013: 2(a)&lt;/a&gt;&lt;a href="images/2013-a3.png" data-fancybox="2013"&gt;&lt;/a&gt;&lt;/h3&gt;
+
+
+```
+Analysis of Variance Table
+
+Response: Weight2
+               Df  Sum Sq Mean Sq F value  Pr(&gt;F)    
+Weight1         2 1012033  506017   13.03 0.00032 ***
+Gender          1  124704  124704    3.21 0.08992 .  
+Weight1:Gender  2   28433   14217    0.37 0.69842    
+Residuals      18  698825   38824                    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+```
+]
+
+---
+
+.left-column[
+# ANOVA Model
+## Two factors
+
+&lt;img src="Day3_files/figure-html/unnamed-chunk-8-1.png" width="90%" /&gt;
+
+```
+                          Estimate
+(Intercept)                 3582.1
+Weight1(High)                234.2
+Weight1(Low)                -265.8
+Gender(Boy)                   72.1
+Weight1(High):Gender(Boy)     29.2
+Weight1(Low):Gender(Boy)     -48.3
+```
+
+].right-column[
+
+### Prediction
+&lt;a href="images/2013-2ab.png" data-fancybox="2013"&gt;Exam 2013: 2(b)&lt;/a&gt;&lt;a href="images/2013-a3.png" data-fancybox="2013"&gt;&lt;/a&gt; wants us to predict the weight of second child (girl) if the first child has `High` weight.
+
+**The Model:**
+`$$y_{ijk} = \mu + \tau_i + \beta_j + (\tau\beta)_{ij} + \varepsilon_{ijk}$$`
+where, `\(\varepsilon_{ijk} \sim N(0, \sigma^2)\)`, `\(i = 1, 2, 3\)`, `\(j = 1, 2\)` and `\(k = 1, 2, 3, 4\)`
+So, the predicted weight for `Girl` child whose first sibling has `High` weight is,
+
+`$$\hat{y}_{\texttt{High, girl}} = \hat{\mu} + \hat{\tau}_\texttt{High} + \hat{\beta}_\texttt{Girl} + (\widehat{\tau\beta})_\texttt{High, Girl}$$`
+.right-column[
+
+```
+       factor2 Weight1(High) Weight1(Low) Weight1(Medium)
+1  Gender(Boy)          29.2        -48.3              NA
+2 Gender(Girl)            NA           NA              NA
+```
+].left-column[
+
+```
+          factor1 coef
+1   Weight1(High)  234
+2    Weight1(Low) -266
+3 Weight1(Medium)   NA
+```
+]
+.full-width[
+`$$\hat{y}_{\texttt{High, girl}} = 3582.083 + (234.167) + (-72.083) + (-29.167) = 3715\text{ gram}$$`
+]]
+
+---
+
+.left-column[
+# ANOVA Model
+## Two factors
+&lt;img src="Day3_files/figure-html/unnamed-chunk-12-1.png" width="90%" /&gt;
+&lt;img src="Day3_files/figure-html/unnamed-chunk-13-1.png" width="90%" /&gt;
+
+
+
+
+
+].right-column[
+### Reducing a two factors Model
+In compulsory assignment 3(c), you are asked to choose between &lt;a href="javascript:;" data-fancybox data-src="#hidden-content"&gt;two models.&lt;/a&gt;
+
+.hidden[
+&lt;div id="hidden-content"&gt;
+&lt;h3&gt;Model 1&lt;/h3&gt;
+
+&lt;table&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;"&gt;   &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; Df &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; Sum Sq &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; Mean Sq &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; F value &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; Pr(&amp;gt;F) &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Fortype &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 4 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 49.3 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 12.32 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 9.54 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.001 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Dommer &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 3 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 29.0 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 9.67 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 7.48 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.004 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Residuals &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 12 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 15.5 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 1.29 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt;  &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt;  &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;h3&gt;Model 2&lt;/h3&gt;
+&lt;table&gt;
+ &lt;thead&gt;
+  &lt;tr&gt;
+   &lt;th style="text-align:left;"&gt;   &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; Df &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; Sum Sq &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; Mean Sq &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; F value &lt;/th&gt;
+   &lt;th style="text-align:right;"&gt; Pr(&amp;gt;F) &lt;/th&gt;
+  &lt;/tr&gt;
+ &lt;/thead&gt;
+&lt;tbody&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Fortype &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 4 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 49.3 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 12.32 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 4.15 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 0.018 &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+   &lt;td style="text-align:left;"&gt; Residuals &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 15 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 44.5 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt; 2.97 &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt;  &lt;/td&gt;
+   &lt;td style="text-align:right;"&gt;  &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;/div&gt;
+]
+
+&lt;details&gt;
+&lt;summary&gt;What happened when removing &lt;code&gt;Dommer&lt;/code&gt; from &lt;code&gt;Model 1&lt;/code&gt;?&lt;/summary&gt;
+
+When we remove a significant factor, its variation adds up to residual rising the model error. When the model error increases, the difference between the treatment becomes more difficult to see.
+
+&lt;/details&gt;
+
+
+### Interaction Term and Degree of freedom
+There is only one observation for each combination of `Fortype` and `Dommer`. So, If we include _interaction term_ we will not have any _degree of freedom_ left for residuals. So, we will only be able to find the estimate, but can not perform any kind of test for there significance.
+
 ]
     </textarea>
 <script src="libs/remark-latest.min.js"></script>
