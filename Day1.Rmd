@@ -11,7 +11,7 @@ output:
     lib_dir: libs
     chakra: 'libs/remark-latest.min.js'
     nature:
-      ratio: 16:9
+      ratio: 16:10
       highlightStyle: github
       highlightLines: true
       countIncrementalSlides: false
@@ -119,7 +119,7 @@ class: spread
 
 <details>
 <summary>Test if expected variance of \(x\) is greater than 11.</summary>
-\[H_1: \sigma > 11\]
+\[H_1: \sigma^2 > 11\]
 </details>
 
 <details>

@@ -11,7 +11,7 @@ output:
     lib_dir: libs
     chakra: 'libs/remark-latest.min.js'
     nature:
-      ratio: 16:9
+      ratio: 16:10
       highlightStyle: github
       highlightLines: true
       countIncrementalSlides: false
@@ -201,7 +201,7 @@ get_fplot(0.05, c(aov_tbl[1, 1], aov_tbl[2, 1]), 15, aov_tbl[1, 4]) +
 ### Questions
 a) What is the 95% **confidence interval of error variance**?
 
-b) We found that there is significant effect of first child's weight on second child, but how different is the effect of `High` from `low` and `medium`?
+b) We found that there is significant effect of first child's weight on second child, but _how different is the effect of `High` from `low` and `medium`_?
 
 ]
 
@@ -210,7 +210,7 @@ b) We found that there is significant effect of first child's weight on second c
 .left-column[
 # ANOVA Model
 ## Confidence Interval
-```{r, fig.width=3.5, out.width='90%', fig.asp = 0.9, fig.retina=2}
+```{r, fig.width=3.5, out.width='90%', fig.asp = 0.8, fig.retina=2}
 get_chisq_plot(0.025, 21, 50)
 ```
 ```{r, fig.width=3.5, out.width='90%', fig.asp = 0.3, fig.retina=2}
@@ -232,6 +232,10 @@ sigma_interval <- ggplot(dta, aes(x, y)) +
            x = c(dta$x, dta$estimate[1]))
 plot(sigma_interval)
 ```
+```{r}
+aov_tbl[, 1:4]
+```
+
 ]
 .right-column[
 ### Confidence interval of error variance
@@ -239,7 +243,8 @@ $$\dfrac{\text{SSE}}{\chi^2_{\alpha/2, N-a}}
 \le \sigma^2 \le
 \dfrac{\text{SSE}}{\chi^2_{1-(\alpha/2), N-a}}$$
 
-### Exam 2013 Data
+<h3><a href="images/2013-a4.png" data-fancybox>Exam 2013 Data</a></h3>
+
 Using values in previous slide in above formula,
 $$\left[
 \dfrac{`r aov_tbl["Residuals", "Sum Sq"]`}{`r cq[1]`}, 
@@ -251,7 +256,7 @@ $$\left[
 
 At **95% confidence level**, we can say that the true error variance $\sigma^2$ lies between the interval (`r round(ci_sigmasq, 1)`).
 
-<h3><a href="images/2011-1b.png" data-fancybox>Exercise: Exam 2011 1(b)</a></h3>
+<h3><a href="images/2011-1b.png" data-fancybox="2011">Exercise: Exam 2011 1(b)</a><a href="images/2011-a2.png" data-fancybox="2011"></a></h3>
 ]
 
 ---
@@ -324,7 +329,7 @@ We have three possible pairs for comparison: `Low-High`, `Medium-High` and `Medi
 
 If compared with $T_{0.05}(3, 21)$, we see that at 95% confidence level, we find `Low-High` and `Medium-Low` differ significantly.
 
-<h3><a href="pastexams/2013.pdf" target = "_blank">Exam 2015, 1(e)</a></h3>
+<h3><a href="images/2015-1e.png" data-fancybox="2015">Exam 2015, 1(e)</a><a href="images/2015-a2.png" data-fancybox="2015"</a></h3>
 ]
 
 ---
@@ -341,14 +346,14 @@ get_tplot(0.025, 21, 3, c(1.94, -1.94))
 - Comparison of one group with average of other group
 - Comparing treatments with control
 
-<h3><a href="images/2014-2d.png" data-fancybox>Exam 2014: 2(d)</a></h3>
+<h3><a href="images/2014-2d.png" data-fancybox="2011">Exam 2014: 2(d)</a></h3>
 **Hypothesis:**
 $$H_0: \frac{1}{2}(\mu_1 + \mu_2) - \frac{1}{2}(\mu_3 + \mu_4) = 0 \text{ vs }
 H_1: \frac{1}{2}(\mu_1 + \mu_2)- \frac{1}{2}(\mu_3 + \mu_4) \ne 0$$
 
 **Decision:**
 
-From <a href="images/2014-a8.png" data-fancybox>Table 8</a>, $\text{p-value }(0.065) > 0.05$.
+From <a href="images/2014-a8.png" data-fancybox="2011">Table 8</a>, $\text{p-value }(0.065) > 0.05$.
 <details>
 <summary><em>What should we conclude?</em></summary>
 .small[
@@ -365,7 +370,7 @@ At 5% significance level we reject null hypothesis. So, we can not argue that ex
 ```{r, fig.width=3.5, out.width='90%', fig.asp = 0.9, fig.retina=2}
 get_tplot(0.025, 21, 3, c(1.94, -1.94))
 ```
-Continue on Exam 2014: 2(d)
+<a href="images/2014-2d.png" data-fancybox="2011">Continue on Exam 2014: 2(d)</a><a href="images/2014-a8.png" data-fancybox="2011"></a>
 ].right-column[
 Before any compution, **formulate a hypothesis**.
 
@@ -420,7 +425,7 @@ From <a href="images/2011-a2.png" data-fancybox="gallery">Appendix 2</a>, we see
 ### Estimates of Variance Components
 $$\text{total variation var}(y_{ij}) = \sigma_\tau^2 + \sigma^2$$
 We estimate them as,
-$$\hat{\sigma} = \text{MSE} \text{ and } \hat{\sigma_\tau} = \frac{\text{MS}_\text{treatment} - \text{MSE}}{n}$$
+$$\hat{\sigma}^2 = \text{MSE} \text{ and } \hat{\sigma_\tau}^2 = \frac{\text{MS}_\text{treatment} - \text{MSE}}{n}$$
 ]
 
 ---
@@ -443,5 +448,6 @@ Using estimates of variance components, we can estimate intraclass correlation c
 
 ### Confidence interval of overall mean
 The $100(1-\alpha)$ level of confidence interval for overall mean $\mu$ in case of **random effect model** is,
-$$\hat{\mu} \pm t_{\alpha/2, N-a}\sqrt{\frac{\text{MS}_\text{treatment}}{N}}$$
+$$\hat{\mu} \pm t_{\alpha/2, a-1}\sqrt{\frac{\text{MS}_\text{treatment}}{N}}$$
+(Refer to Thore's Lecture on Random effect Model)
 ]

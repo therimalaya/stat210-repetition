@@ -73,7 +73,7 @@ From &lt;a href="images/F005-2.png" data-fancybox&gt;F-table&lt;/a&gt;, `\(F_0 &
 ### Questions
 a) What is the 95% **confidence interval of error variance**?
 
-b) We found that there is significant effect of first child's weight on second child, but how different is the effect of `High` from `low` and `medium`?
+b) We found that there is significant effect of first child's weight on second child, but _how different is the effect of `High` from `low` and `medium`_?
 
 ]
 
@@ -84,6 +84,13 @@ b) We found that there is significant effect of first child's weight on second c
 ## Confidence Interval
 &lt;img src="Day2_files/figure-html/unnamed-chunk-6-1.png" width="90%" /&gt;
 &lt;img src="Day2_files/figure-html/unnamed-chunk-7-1.png" width="90%" /&gt;
+
+```
+          Df  Sum Sq Mean Sq F value
+Weight1    2 1012033  506017    12.5
+Residuals 21  851962   40570        
+```
+
 ]
 .right-column[
 ### Confidence interval of error variance
@@ -91,7 +98,8 @@ b) We found that there is significant effect of first child's weight on second c
 \le \sigma^2 \le
 \dfrac{\text{SSE}}{\chi^2_{1-(\alpha/2), N-a}}$$`
 
-### Exam 2013 Data
+&lt;h3&gt;&lt;a href="images/2013-a4.png" data-fancybox&gt;Exam 2013 Data&lt;/a&gt;&lt;/h3&gt;
+
 Using values in previous slide in above formula,
 `$$\left[
 \dfrac{851962.5}{35.479}, 
@@ -103,14 +111,14 @@ Using values in previous slide in above formula,
 
 At **95% confidence level**, we can say that the true error variance `\(\sigma^2\)` lies between the interval (24013.2, 82852.4).
 
-&lt;h3&gt;&lt;a href="images/2011-1b.png" data-fancybox&gt;Exercise: Exam 2011 1(b)&lt;/a&gt;&lt;/h3&gt;
+&lt;h3&gt;&lt;a href="images/2011-1b.png" data-fancybox="2011"&gt;Exercise: Exam 2011 1(b)&lt;/a&gt;&lt;a href="images/2011-a2.png" data-fancybox="2011"&gt;&lt;/a&gt;&lt;/h3&gt;
 ]
 
 ---
 .left-column[
 # ANOVA Model
 ## Post-hoc Test
-&lt;img src="Day2_files/figure-html/unnamed-chunk-8-1.png" width="90%" /&gt;
+&lt;img src="Day2_files/figure-html/unnamed-chunk-9-1.png" width="90%" /&gt;
 .side-caption[
 Think what will happen if you increase the confidence level from 0.05 to 0.1.
 ]
@@ -133,7 +141,7 @@ You can also check if this interval contains zero.
 .left-column[
 # ANOVA Model
 ## Post-hoc Example
-&lt;img src="Day2_files/figure-html/unnamed-chunk-9-1.png" width="90%" /&gt;
+&lt;img src="Day2_files/figure-html/unnamed-chunk-10-1.png" width="90%" /&gt;
 
 
 ```
@@ -163,7 +171,7 @@ We have three possible pairs for comparison: `Low-High`, `Medium-High` and `Medi
 
 If compared with `\(T_{0.05}(3, 21)\)`, we see that at 95% confidence level, we find `Low-High` and `Medium-Low` differ significantly.
 
-&lt;h3&gt;&lt;a href="pastexams/2013.pdf" target = "_blank"&gt;Exam 2015, 1(e)&lt;/a&gt;&lt;/h3&gt;
+&lt;h3&gt;&lt;a href="images/2015-1e.png" data-fancybox="2015"&gt;Exam 2015, 1(e)&lt;/a&gt;&lt;a href="images/2015-a2.png" data-fancybox="2015"&lt;/a&gt;&lt;/h3&gt;
 ]
 
 ---
@@ -171,21 +179,21 @@ If compared with `\(T_{0.05}(3, 21)\)`, we see that at 95% confidence level, we 
 .left-column[
 # ANOVA Model
 ## Contrast test
-&lt;img src="Day2_files/figure-html/unnamed-chunk-12-1.png" width="90%" /&gt;
+&lt;img src="Day2_files/figure-html/unnamed-chunk-13-1.png" width="90%" /&gt;
 ].right-column[
 ### Use cases
 
 - Comparison of one group with average of other group
 - Comparing treatments with control
 
-&lt;h3&gt;&lt;a href="images/2014-2d.png" data-fancybox&gt;Exam 2014: 2(d)&lt;/a&gt;&lt;/h3&gt;
+&lt;h3&gt;&lt;a href="images/2014-2d.png" data-fancybox="2011"&gt;Exam 2014: 2(d)&lt;/a&gt;&lt;/h3&gt;
 **Hypothesis:**
 `$$H_0: \frac{1}{2}(\mu_1 + \mu_2) - \frac{1}{2}(\mu_3 + \mu_4) = 0 \text{ vs }
 H_1: \frac{1}{2}(\mu_1 + \mu_2)- \frac{1}{2}(\mu_3 + \mu_4) \ne 0$$`
 
 **Decision:**
 
-From &lt;a href="images/2014-a8.png" data-fancybox&gt;Table 8&lt;/a&gt;, `\(\text{p-value }(0.065) &gt; 0.05\)`.
+From &lt;a href="images/2014-a8.png" data-fancybox="2011"&gt;Table 8&lt;/a&gt;, `\(\text{p-value }(0.065) &gt; 0.05\)`.
 &lt;details&gt;
 &lt;summary&gt;&lt;em&gt;What should we conclude?&lt;/em&gt;&lt;/summary&gt;
 .small[
@@ -199,8 +207,8 @@ At 5% significance level we reject null hypothesis. So, we can not argue that ex
 .left-column[
 # ANOVA Model
 ## Contrast Calculation
-&lt;img src="Day2_files/figure-html/unnamed-chunk-13-1.png" width="90%" /&gt;
-Continue on Exam 2014: 2(d)
+&lt;img src="Day2_files/figure-html/unnamed-chunk-14-1.png" width="90%" /&gt;
+&lt;a href="images/2014-2d.png" data-fancybox="2011"&gt;Continue on Exam 2014: 2(d)&lt;/a&gt;&lt;a href="images/2014-a8.png" data-fancybox="2011"&gt;&lt;/a&gt;
 ].right-column[
 Before any compution, **formulate a hypothesis**.
 
@@ -243,7 +251,7 @@ _Specific levels of a factor is important_ than their general variation. These l
 # ANOVA Model
 ## Random Effect Model
 
-&lt;img src="Day2_files/figure-html/unnamed-chunk-14-1.png" width="90%" /&gt;
+&lt;img src="Day2_files/figure-html/unnamed-chunk-15-1.png" width="90%" /&gt;
 ].right-column[
 &lt;h3&gt;&lt;a href="images/2011-1a.png" data-fancybox="gallery"&gt;Exam 2011: 1(a)&lt;/a&gt;&lt;/h3&gt;
 **Hypothesis:**
@@ -253,7 +261,7 @@ From &lt;a href="images/2011-a2.png" data-fancybox="gallery"&gt;Appendix 2&lt;/a
 ### Estimates of Variance Components
 `$$\text{total variation var}(y_{ij}) = \sigma_\tau^2 + \sigma^2$$`
 We estimate them as,
-`$$\hat{\sigma} = \text{MSE} \text{ and } \hat{\sigma_\tau} = \frac{\text{MS}_\text{treatment} - \text{MSE}}{n}$$`
+`$$\hat{\sigma}^2 = \text{MSE} \text{ and } \hat{\sigma_\tau}^2 = \frac{\text{MS}_\text{treatment} - \text{MSE}}{n}$$`
 ]
 
 ---
@@ -276,12 +284,13 @@ Using estimates of variance components, we can estimate intraclass correlation c
 
 ### Confidence interval of overall mean
 The `\(100(1-\alpha)\)` level of confidence interval for overall mean `\(\mu\)` in case of **random effect model** is,
-`$$\hat{\mu} \pm t_{\alpha/2, N-a}\sqrt{\frac{\text{MS}_\text{treatment}}{N}}$$`
+`$$\hat{\mu} \pm t_{\alpha/2, a-1}\sqrt{\frac{\text{MS}_\text{treatment}}{N}}$$`
+(Refer to Thore's Lecture on Random effect Model)
 ]
     </textarea>
 <script src="libs/remark-latest.min.js"></script>
 <script>var slideshow = remark.create({
-"ratio": "16:9",
+"ratio": "16:10",
 "highlightStyle": "github",
 "highlightLines": true,
 "countIncrementalSlides": false

@@ -1,0 +1,169 @@
+---
+title: "Design of Experiment and Analysis of Variance"
+subtitle: "Repetition"
+author: "Raju Rimal"
+date: "`r format(Sys.Date(), '%d %b, %Y')`"
+output:
+  xaringan::moon_reader:
+    includes:
+      in_header: "header.html"
+      after_body: "footer.html"
+    lib_dir: libs
+    chakra: 'libs/remark-latest.min.js'
+    nature:
+      ratio: 16:10
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+options(htmltools.dir.version = FALSE, 
+        digits = 3, scipen = 9, signif = 999)
+knitr::opts_chunk$set(echo = FALSE, comment = NULL)
+library(mixlm)
+library(tidyverse)
+library(gganimate)
+```
+```{r load-function, include=FALSE}
+get_fplot <- function(alpha, deg.freedom, max_limit, fvalue = NULL) {
+d <- deg.freedom
+lmt <- max_limit
+plt <- ggplot(data.frame(x = 0:lmt), aes(x)) +
+  stat_function(fun = df, args = list(df1 = d[1], df2 = d[2]), n = 200) +
+  stat_function(fun = df, args = list(df1 = d[1], df2 = d[2]), n = 200, 
+                xlim = c(qf(alpha, df1 = d[1], df2 = d[2], lower.tail = FALSE), lmt), 
+                geom = "area") +
+  ggtitle(paste("F-distribution with", paste(d, collapse = " and "), "df"),
+          paste(alpha, "level of significance")) +
+  labs(x = "F", y = NULL) +
+  annotate(x = qf(alpha, df1 = d[1], df2 = d[2], lower.tail = FALSE),
+           color = "red",
+           ymin = 0, ymax = 0.1, geom = "linerange") +
+  annotate(x = qf(alpha, df1 = d[1], df2 = d[2], lower.tail = FALSE),
+           label = paste("F =", round(qf(alpha, df1 = d[1], df2 = d[2], lower.tail = FALSE), 3)), 
+           geom = "text", y = 0.15, hjust = 0)
+if (!is.null(fvalue)){
+  plt <- plt +
+    annotate(x = fvalue, y = 0, geom = "point", color = "red") +
+    annotate(x = fvalue, y = 0, geom = "text", label = paste("F0:", round(fvalue, 3)), hjust = 1.2)
+}
+return(plt)
+}
+get_chisq_plot <- function(alpha, deg.freedom, max_limit, test_statistic = NULL){
+d <- deg.freedom
+lmt <- max_limit
+plt <- ggplot(data.frame(x = 0:lmt), aes(x)) +
+  stat_function(fun = dchisq, args = list(df = d), n = 200) +
+  stat_function(fun = dchisq, args = list(df = d), n = 200, 
+                xlim = c(0, qchisq(alpha, df = d, lower.tail = TRUE)), 
+                geom = "area") +
+  stat_function(fun = dchisq, args = list(df = d), n = 200, 
+                xlim = c(qchisq(alpha, df = d, lower.tail = FALSE), lmt), 
+                geom = "area") +
+  ggtitle(paste("Chisq-distribution with", d, "df"),
+          paste(2*alpha, "level of significance")) +
+  labs(x = "Chisq", y = NULL) +
+  annotate(x = c(qchisq(alpha, df = d, lower.tail = FALSE),
+                 qchisq(alpha, df = d, lower.tail = TRUE)),
+           color = "red",
+           ymin = 0, ymax = c(0.02, 0.05), geom = "linerange") +
+  annotate(x = c(qchisq(alpha, df = d, lower.tail = FALSE),
+                 qchisq(alpha, df = d, lower.tail = TRUE)),
+           label = paste("Chisq =", round(c(
+             qchisq(alpha, df = d, lower.tail = FALSE),
+             qchisq(alpha, df = d, lower.tail = TRUE)
+           ), 3)), 
+           geom = "text", y = c(0.02, 0.05), hjust = c(0, 1))
+if (!is.null(test_statistic)){
+  plt <- plt +
+    annotate(x = test_statistic, y = 0, geom = "point", color = "red") +
+    annotate(x = test_statistic, y = 0, geom = "text", label = paste("Chisq0:", round(test_statistic, 3)), hjust = 1.2)
+}
+return(plt)
+}
+get_tplot <- function(alpha, deg.freedom, max_limit, test_statistic = NULL){
+d <- deg.freedom
+lmt <- max_limit
+plt <- ggplot(data.frame(x = -lmt:lmt), aes(x)) +
+  stat_function(fun = dt, args = list(df = d), n = 200) +
+  stat_function(fun = dt, args = list(df = d), n = 200, 
+                xlim = c(-lmt, qt(alpha, df = d, lower.tail = TRUE)), 
+                geom = "area") +
+  stat_function(fun = dt, args = list(df = d), n = 200, 
+                xlim = c(qt(alpha, df = d, lower.tail = FALSE), lmt), 
+                geom = "area") +
+  ggtitle(paste("T-distribution with", d, "df"),
+          paste(2*alpha, "level of significance")) +
+  labs(x = "T", y = NULL) +
+  annotate(x = c(qt(alpha, df = d, lower.tail = FALSE),
+                 qt(alpha, df = d, lower.tail = TRUE)),
+           color = "red",
+           ymin = 0, ymax = 0.1, geom = "linerange") +
+  annotate(x = c(qt(alpha, df = d, lower.tail = FALSE),
+                 qt(alpha, df = d, lower.tail = TRUE)),
+           label = paste("t=", round(c(
+             qt(alpha, df = d, lower.tail = FALSE),
+             qt(alpha, df = d, lower.tail = TRUE)
+           ), 3)), 
+           geom = "text", y = 0.1, hjust = c(0, 1))
+if (!is.null(test_statistic)){
+  plt <- plt +
+    annotate(x = test_statistic, y = 0, geom = "point", color = "red") +
+    annotate(x = test_statistic, y = 0, geom = "text", 
+             label = paste("t0:", round(test_statistic, 3)), 
+             hjust = if(length(test_statistic) == 1) 1.2 else c(1, 0))
+}
+return(plt)
+}
+```
+
+
+background-image: url(https://www.nmbu.no/sites/all/themes/nmbu_university/images/logo-nb.png)
+
+???
+
+Image credit: [NMBU](https://www.nmbu.no/sites/all/themes/nmbu_university/images/logo-nb.png)
+
+
+---
+class: center, middle, inverse
+
+# ANOVA Model
+
+---
+
+.left-column[
+# ANOVA Model
+## Random Effect Model
+
+- <a href="images/2011-1cd.png" data-fancybox>Exam 2011: 1(c), 1(d)</a>
+- <a href="images/2012-1c.png" data-fancybox>Exam 2012: 1(c)</a>
+- <a href="images/2013-1c.png" data-fancybox>Exam 2013: 1(c)</a>
+- <a href="images/2014-1e.png" data-fancybox>Exam 2014: 1(e)</a>
+- <a href="images/2015-2c.png" data-fancybox>Exam 2015: 2(c)</a>
+
+].right-column[
+### Intraclass Correlation Coefficient
+Proportion of variation between groups to total variation.
+$$\rho = \frac{\sigma_\tau^2}{\sigma_\tau^2 + \sigma^2}$$
+Using estimates of variance components, we can estimate intraclass correlation coefficient.
+
+### Confidence interval of overall mean
+The $100(1-\alpha)$ level of confidence interval for overall mean $\mu$ in case of **random effect model** is,
+$$\hat{\mu} \pm t_{\alpha/2, a-1}\sqrt{\frac{\text{MS}_\text{treatment}}{N}}$$
+(Refer to Thore's Lecture on Random effect Model)
+]
+
+---
+
+.left-column[
+# ANOVA Model
+## Random Effect Model
+].right-column[
+### Interpretation of Intraclass correlation coefficient
+
+### Interpretation of Overall Mean
+]
