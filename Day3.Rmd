@@ -463,7 +463,7 @@ mdl2 <- lm(uptake ~ Treatment, data = CO2)
 ### Assumption of random error with constant variance
 
 ### Normality of Error term
-```{r, fig.width = 3.5, out.width = "45%", fig.retina = 2, fig.asp = 0.5}
+```{r, fig.width = 3.5, out.width = "45%", fig.retina = 2, fig.asp = 0.6}
 plt1 <- ggplot(mdl1) +
     stat_qq(aes(sample = .stdresid), shape = 21) +
     geom_abline()
@@ -471,12 +471,14 @@ plt2 <- ggplot(mdl2) +
     stat_qq(aes(sample = .stdresid), shape = 21) +
     geom_abline()
 plt3 <- ggplot(mdl1, aes(.resid)) +
-    geom_line(stat = "density") +
+    geom_histogram(aes(y = ..density..), bins = 12, 
+                   fill = "lightgray", color = "darkgray") +
     stat_function(fun = dnorm, color = "red",
     args = list(sd = sigma(mdl1))) +
     labs(x = "Residuals")
 plt4 <- ggplot(mdl2, aes(.resid)) +
-    geom_line(stat = "density") +
+    geom_histogram(aes(y = ..density..), bins = 12, 
+                   fill = "lightgray", color = "darkgray") +
     stat_function(fun = dnorm, color = "red",
     args = list(sd = sigma(mdl2))) +
     labs(x = "Residuals")
