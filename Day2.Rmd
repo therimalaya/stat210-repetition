@@ -357,7 +357,7 @@ From <a href="images/2014-a8.png" data-fancybox="2011">Table 8</a>, $\text{p-val
 <details>
 <summary><em>What should we conclude?</em></summary>
 .small[
-At 5% significance level we reject null hypothesis. So, we can not argue that expected differs significantly between January-June and July-December.
+At 5% significance level we cannot reject null hypothesis. So, we can not argue that expected differs significantly between January-June and July-December.
 ]
 </details>
 ]

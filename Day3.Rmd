@@ -11,7 +11,7 @@ output:
     lib_dir: libs
     chakra: 'libs/remark-latest.min.js'
     nature:
-      ratio: 16:9
+      ratio: 16:10
       highlightStyle: github
       highlightLines: true
       countIncrementalSlides: false
